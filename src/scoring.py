@@ -19,4 +19,3 @@ def game_points(minutes: int) -> int:
 assert game_points(65) == 2, game_points(65)
 assert game_points(57) == 1, game_points(57)
 assert game_points(0) == 0, game_points(0)
-assert game_points(45) != 2, game_points(45)
