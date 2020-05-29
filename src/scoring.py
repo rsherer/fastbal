@@ -9,6 +9,9 @@ season_stats_columns = ['ID', 'NAME', 'TEAM', 'RD', 'HOME_AWAY', 'OPPONENT',
 ### game by game fantasy points.
 
 def game_points(minutes: int) -> int:
+    '''Calculate the number of fantasy points for the 'MIN' column for each
+    player's games.
+    '''
     if minutes >= 60:
         return 2
     elif minutes > 0:
