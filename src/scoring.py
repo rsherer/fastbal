@@ -8,7 +8,7 @@ season_stats_columns = ['ID', 'NAME', 'TEAM', 'RD', 'HOME_AWAY', 'OPPONENT',
 ### to do: create functions for each column that is used to total
 ### game by game fantasy points.
 
-def game_points(minutes: int) -> int:
+def calculate_minutes_points(minutes: int) -> int:
     '''Calculate the number of fantasy points for the 'MIN' column for each
     player's games.
     '''
@@ -19,6 +19,12 @@ def game_points(minutes: int) -> int:
     else:
         return 0
 
-assert game_points(65) == 2, game_points(65)
-assert game_points(57) == 1, game_points(57)
-assert game_points(0) == 0, game_points(0)
+def calculate_goals_scored_points(goals: int, position: str) -> int:
+    '''Calculate fantasy points for goals scored. 6 points for a goalkeeper
+    or a defender, 5 points for a midfielder or forward.
+    '''
+    assert position in ['G', 'D', 'M', 'F'], 'Not a valid position'
+    if position in ['G', 'D']:
+        return 6 * goals
+    if position in ['M', 'F']:
+        return 5 * goals
