@@ -61,3 +61,23 @@ def points_for_penalty_save(saves: int) -> int:
         return saves * 5
     else:
         return 0
+
+def points_for_penalty_earned(earned: int) -> int:
+    '''Calculate fantasy points for 'PE', penalties earned. For players
+    fouled in the penalty box, earning a penalty change for their team.
+    Two points for each penalty earned.
+    '''
+    if earned > 0:
+        return earned * 2
+    else:
+        return 0
+
+def points_for_penalty_missed(missed: int) -> int:
+    '''Calculate fantasy points for 'PM', penalties missed. For players who
+    attempt a penalty kick, and miss for whatever reason. Negative two points
+    are earned for each penalty miss.
+    '''
+    if missed > 0:
+        return missed * -2
+    else:
+        return 0
