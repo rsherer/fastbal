@@ -37,3 +37,8 @@ class TestScoring(unittest.TestCase):
         self.assertEqual(sc.points_for_clean_sheet(1, 'F'), 0)
         self.assertEqual(sc.points_for_clean_sheet(0, 'D'), 0)
         self.assertEqual(sc.points_for_clean_sheet(2, 'D'), 0)
+
+    def test_penalty_saves(self):
+        self.assertEqual(sc.points_for_penalty_save(0), 0)
+        self.assertEqual(sc.points_for_penalty_save(1), 5)
+        self.assertEqual(sc.points_for_penalty_save(2), 10)
