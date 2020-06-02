@@ -42,3 +42,13 @@ class TestScoring(unittest.TestCase):
         self.assertEqual(sc.points_for_penalty_save(0), 0)
         self.assertEqual(sc.points_for_penalty_save(1), 5)
         self.assertEqual(sc.points_for_penalty_save(2), 10)
+
+    def test_penalty_earned(self):
+        self.assertEqual(sc.points_for_penalty_earned(0), 0)
+        self.assertEqual(sc.points_for_penalty_earned(1), 2)
+        self.assertEqual(sc.points_for_penalty_earned(3), 6)
+
+    def test_penalty_missed(self):
+        self.assertEqual(sc.points_for_penalty_missed(0), 0)
+        self.assertEqual(sc.points_for_penalty_missed(1), -2)
+        self.assertEqual(sc.points_for_penalty_missed(4), -8)
