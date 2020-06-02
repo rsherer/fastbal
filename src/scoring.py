@@ -9,7 +9,7 @@ season_stats_columns = ['ID', 'NAME', 'TEAM', 'RD', 'HOME_AWAY', 'OPPONENT',
 ### game by game fantasy points. Points are calculated from the category 'MIN'
 ### onward
 
-def points_for_minutes_played(minutes: int) -> int:
+def minutes_played(minutes: int) -> int:
     '''Calculate the number of fantasy points for the 'MIN' column for each
     player's games.
     '''
@@ -20,7 +20,7 @@ def points_for_minutes_played(minutes: int) -> int:
     else:
         return 0
 
-def points_for_goals_scored(goals: int, position: str) -> int:
+def goals_scored(goals: int, position: str) -> int:
     '''Calculate fantasy points for 'GF' column which is goals scored. 
     6 points for a goalkeeper or a defender, 5 points for a midfielder 
     or forward.
@@ -33,13 +33,13 @@ def points_for_goals_scored(goals: int, position: str) -> int:
     else:
         return 0
 
-def points_for_assists(assists: int) -> int:
+def assists(assists: int) -> int:
     '''Calculate fantasy points for 'A', which is assists in a match. Each
     assist or secondary assist during a match is 3 points for the player.
     '''
     return assists * 3
 
-def points_for_clean_sheet(clean_sheet: int, position: str) -> int:
+def clean_sheet(clean_sheet: int, position: str) -> int:
     '''Calculate fantasy points for 'CS', which is for a clean sheet, meaning
     the defense gives up zero goals. A goalkeeper ('G') or a defender ('D')
     will receive 6 points, a midfielder ('M') will receive 1 point.
@@ -53,7 +53,7 @@ def points_for_clean_sheet(clean_sheet: int, position: str) -> int:
     else:
         return 0
 
-def points_for_penalty_save(saves: int) -> int:
+def penalty_save(saves: int) -> int:
     '''Calculate fantasy points for 'PS', penalties saved. Generally
     attributed to goalies, the column exists for all players. 5 points per
     penalty save.'''
@@ -62,7 +62,7 @@ def points_for_penalty_save(saves: int) -> int:
     else:
         return 0
 
-def points_for_penalty_earned(earned: int) -> int:
+def penalty_earned(earned: int) -> int:
     '''Calculate fantasy points for 'PE', penalties earned. For players
     fouled in the penalty box, earning a penalty change for their team.
     Two points for each penalty earned.
@@ -72,7 +72,7 @@ def points_for_penalty_earned(earned: int) -> int:
     else:
         return 0
 
-def points_for_penalty_missed(missed: int) -> int:
+def penalty_missed(missed: int) -> int:
     '''Calculate fantasy points for 'PM', penalties missed. For players who
     attempt a penalty kick, and miss for whatever reason. Negative two points
     are earned for each penalty miss.
