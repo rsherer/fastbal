@@ -81,3 +81,22 @@ def penalty_missed(missed: int) -> int:
         return missed * -2
     else:
         return 0
+
+def goal_against(ga: int, position: str) -> int:
+    '''Calculate fantasy points for 'GA', goals scored against the player's
+    team. For goalkeepers and defenders, a negative point is earned for every
+    two goals against.
+    '''
+    if position in ['G', 'D'] and ga > 1:
+        return (ga // 2) * -1
+    else:
+        return 0
+
+def saves(saves: int) -> int:
+    '''Calculate fantasy points for 'S', saves made during the match. For 
+    goalkeepers, primarily. One point is earned for every three saves.
+    '''
+    if saves > 0:
+        return saves // 3
+    else:
+        return 0
