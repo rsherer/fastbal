@@ -52,3 +52,12 @@ def points_for_clean_sheet(clean_sheet: int, position: str) -> int:
         return 1
     else:
         return 0
+
+def points_for_penalty_save(saves: int) -> int:
+    '''Calculate fantasy points for 'PS', penalties saved. Generally
+    attributed to goalies, the column exists for all players. 5 points per
+    penalty save.'''
+    if saves > 0:
+        return saves * 5
+    else:
+        return 0
