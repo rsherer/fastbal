@@ -27,12 +27,28 @@ def points_for_goals_scored(goals: int, position: str) -> int:
     '''
     assert position in ['G', 'D', 'M', 'F'], 'Not a valid position'
     if position in ['G', 'D']:
-        return 6 * goals
-    if position in ['M', 'F']:
-        return 5 * goals
+        return goals * 6
+    elif position in ['M', 'F']:
+        return goals * 5
+    else:
+        return 0
 
 def points_for_assists(assists: int) -> int:
     '''Calculate fantasy points for 'A', which is assists in a match. Each
     assist or secondary assist during a match is 3 points for the player.
     '''
     return assists * 3
+
+def points_for_clean_sheet(clean_sheet: int, position: str) -> int:
+    '''Calculate fantasy points for 'CS', which is for a clean sheet, meaning
+    the defense gives up zero goals. A goalkeeper ('G') or a defender ('D')
+    will receive 6 points, a midfielder ('M') will receive 1 point.
+    '''
+    if clean_sheet != 1:
+        return 0
+    elif position in ['G', 'D']:
+        return 5
+    elif position == 'M':
+        return 1
+    else:
+        return 0
