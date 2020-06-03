@@ -132,3 +132,86 @@ class TestScoring(unittest.TestCase):
         self.assertEqual(sc.key_passes(6), 2)
         self.assertEqual(sc.key_passes(8), 2)
         self.assertEqual(sc.key_passes(9), 3)
+
+    def test_crosses(self):
+        self.assertEqual(sc.crosses(0), 0)
+        self.assertEqual(sc.crosses(1), 0)
+        self.assertEqual(sc.crosses(2), 0)
+        self.assertEqual(sc.crosses(3), 1)
+        self.assertEqual(sc.crosses(4), 1)
+        self.assertEqual(sc.crosses(6), 2)
+        self.assertEqual(sc.crosses(8), 2)
+        self.assertEqual(sc.crosses(9), 3)
+
+    def test_big_chance(self):
+        self.assertEqual(sc.big_chance(0), 0)
+        self.assertEqual(sc.big_chance(1), 1)
+        self.assertEqual(sc.big_chance(2), 2)
+        self.assertEqual(sc.big_chance(4), 4)
+        self.assertEqual(sc.big_chance(5), 5)
+
+    def test_clearances(self):
+        self.assertEqual(sc.clearances(0), 0)
+        self.assertEqual(sc.clearances(1), 0)
+        self.assertEqual(sc.clearances(4), 1)
+        self.assertEqual(sc.clearances(5), 1)
+        self.assertEqual(sc.clearances(12), 3)
+
+    def test_blocks(self):
+        self.assertEqual(sc.blocks(0), 0)
+        self.assertEqual(sc.blocks(1), 0)
+        self.assertEqual(sc.blocks(2), 1)
+        self.assertEqual(sc.blocks(3), 1)
+        self.assertEqual(sc.blocks(4), 2)
+        self.assertEqual(sc.blocks(8), 4)
+
+    def test_interceptions(self):
+        self.assertEqual(sc.interceptions(0), 0)
+        self.assertEqual(sc.interceptions(1), 0)
+        self.assertEqual(sc.interceptions(2), 0)
+        self.assertEqual(sc.interceptions(3), 0)
+        self.assertEqual(sc.interceptions(4), 1)
+        self.assertEqual(sc.interceptions(7), 1)
+        self.assertEqual(sc.interceptions(8), 2)
+        self.assertEqual(sc.interceptions(12), 3)
+
+    def test_recovered_balls(self):
+        self.assertEqual(sc.recovered_balls(0), 0)
+        self.assertEqual(sc.recovered_balls(5), 0)
+        self.assertEqual(sc.recovered_balls(6), 1)
+        self.assertEqual(sc.recovered_balls(7), 1)
+        self.assertEqual(sc.recovered_balls(12), 2)
+
+    def test_error_leading_to_goal(self):
+        self.assertEqual(sc.error_leading_to_goal(0), 0)
+        self.assertEqual(sc.error_leading_to_goal(1), -1)
+        self.assertEqual(sc.error_leading_to_goal(2), -2)
+        self.assertEqual(sc.error_leading_to_goal(3), -3)
+        self.assertNotEqual(sc.error_leading_to_goal(4), 2)
+
+    def test_own_goal_assist(self):
+        self.assertEqual(sc.own_goal_assist(0), 0)
+        self.assertEqual(sc.own_goal_assist(1), 1)
+        self.assertEqual(sc.own_goal_assist(2), 2)
+        self.assertEqual(sc.own_goal_assist(3), 3)
+        self.assertNotEqual(sc.own_goal_assist(2), 3)
+    
+    def test_shots(self):
+        self.assertEqual(sc.shots(0), 0)
+        self.assertEqual(sc.shots(1), 0)
+        self.assertEqual(sc.shots(3), 0)
+        self.assertEqual(sc.shots(4), 1)
+        self.assertEqual(sc.shots(6), 1)
+        self.assertEqual(sc.shots(8), 2)
+        self.assertEqual(sc.shots(9), 2)
+        self.assertNotEqual(sc.shots(3), 2)
+
+    def test_was_fouled(self):
+        self.assertEqual(sc.was_fouled(0), 0)
+        self.assertEqual(sc.was_fouled(1), 0)
+        self.assertEqual(sc.was_fouled(3), 0)
+        self.assertEqual(sc.was_fouled(4), 1)
+        self.assertEqual(sc.was_fouled(6), 1)
+        self.assertEqual(sc.was_fouled(8), 2)
+        self.assertEqual(sc.was_fouled(9), 2)
+        self.assertNotEqual(sc.was_fouled(3), 2)
