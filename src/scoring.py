@@ -140,6 +140,64 @@ def key_passes(kp: int) -> int:
     '''
     return kp // 3
 
+def crosses(crosses: int) -> int:
+    '''Calculate fantasy points earned for 'CRS', crosses in a match. A cross
+    is defined where the ball is played to their own player in the penalty
+    area. 1 point is earned for every 3 crosses.
+    '''
+    return crosses // 3
 
+def big_chance(bc: int) -> int:
+    '''Calculate fantasy points earned for 'BC', big changes created. A big
+    change created is one where the analyst/scorekeeper determines the player
+    should score. 1 point is earned for each big chance created in a match.
+    '''
+    return bc
 
-#'KP', 'CRS', 'BC', 'CL', 'BLK', 'INT', 'BR', 'ELG', 'OGA', 'SH', 'WF']
+def clearances(c: int) -> int:
+    '''Calculate fantasy points earned for 'CL', clearances. 1 point is 
+    earned for every 4 clearances in a match.
+    '''
+    return c // 4
+
+def blocks(blk: int) -> int:
+    '''Calculate fantasy points earned for 'BLK', blocks. 1 point is earned
+    for every 2 blocks in a match.
+    '''
+    return blk // 2
+
+def interceptions(interceptions: int) -> int:
+    '''Calculate fantasy points earned for 'INT', interceptions in a match.
+    1 point is earned for every 4 interceptions.
+    '''
+    return interceptions // 4
+
+def recovered_balls(rb: int) -> int:
+    '''Calculate fantasy points earned fo 'BR', balls recovered in a match. 1 
+    point is earned for every 6 recovered balls.
+    '''
+    return rb // 6
+
+def error_leading_to_goal(elg: int) -> int:
+    '''Calculate fantasy points earned fo 'ELG', erros leading to a goal in
+    a match. Negative 1 point is earned for every error leading to a goal.
+    '''
+    return -elg
+
+def own_goal_assist(oga: int) -> int:
+    '''Calculate fantasy points earned fo 'OGA', own goal assists in a match.
+    1 point is earned for every own goal assist.
+    '''
+    return oga
+
+def shots(shots: int) -> int:
+    '''Calculate fantasy points earned fo 'SH', shots in a match. 1 
+    point is earned for every 4 shots.
+    '''
+    return shots // 4
+
+def was_fouled(wf: int) -> int:
+    '''Calculate fantasy points earned fo 'WF', fouls received in a match. 1 
+    point is earned for every 4 fouls received.
+    '''
+    return wf // 4
