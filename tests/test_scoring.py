@@ -37,6 +37,10 @@ class TestScoring(unittest.TestCase):
         self.assertEqual(sc.clean_sheet(1, 'F'), 0)
         self.assertEqual(sc.clean_sheet(0, 'D'), 0)
         self.assertEqual(sc.clean_sheet(2, 'D'), 0)
+        with self.assertRaises(ValueError):
+            sc.clean_sheet(3, 'u')
+        with self.assertRaises(ValueError):
+            sc.clean_sheet(3, '')
 
     def test_penalty_saves(self):
         self.assertEqual(sc.penalty_save(0), 0)
@@ -74,6 +78,10 @@ class TestScoring(unittest.TestCase):
         self.assertEqual(sc.goal_against(4, 'G'), -2)
         self.assertEqual(sc.goal_against(5, 'D'), -2)
         self.assertEqual(sc.goal_against(6, 'D'), -3)
+        with self.assertRaises(ValueError):
+            sc.goal_against(2, 'U')
+        with self.assertRaises(ValueError):
+            sc.goal_against(3, '')
 
     def test_saves(self):
         self.assertEqual(sc.saves(0), 0)
