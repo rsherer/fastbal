@@ -31,7 +31,7 @@ def goals_scored(goals: int, position: str) -> int:
     )
     if position in ['G', 'D']:
         return goals * 6
-    elif position in ['M', 'F']:
+    else:
         return goals * 5
 
 def assists(assists: int) -> int:
@@ -98,3 +98,48 @@ def saves(saves: int) -> int:
     goalkeepers, primarily. One point is earned for every three saves.
     '''
     return saves // 3
+
+def yellow_cards(yellows: int) -> int:
+    '''Calculate fantasy points for 'Y', yellows cards received during a 
+    match. One negative point is earned for each yellow card.
+    '''
+    return yellows * -1
+
+def red_cards(reds: int) -> int:
+    '''Calculate fantasy points for 'R', red cards received during a match.
+    Three negative points are earned for a red card.
+    '''
+    return reds * -3
+
+def own_goal(og: int) -> int:
+    '''Calculate fantasy points earned for 'OG', own goals in a match. Two 
+    negative points are earned for a red card.
+    '''
+    return og * -2
+
+def tackles(t: int) -> int:
+    '''Calculate fantasy points earned for 'T', tackles in a match. One point
+    is earned for every four tackles in a match.
+    '''
+    return t // 4
+
+def passes(passes: int) -> int:
+    '''Calculate fantasy points earned for 'P', passes in a match. A fantasy
+    point is awarded for every 35 passes, AND if the pass success rate is 
+    above 85%.
+    '''
+    # to do: not sure if there is any way to know if the pass success rate
+    # is above 85%, other than points awarded in this category. Will need
+    # to update this code for the additional condition of successful passes.
+    return passes // 35
+ 
+def key_passes(kp: int) -> int:
+    '''Calculate fantasy points earned for 'KP', key passes in a match. A key
+    pass is a pass theat leads to a shot on goal. 1 point is earned for
+    every 3 key passes.
+    '''
+    return kp // 3
+
+
+
+#'KP', 'CRS', 'BC', 'CL', 'BLK', 'INT', 'BR', 'ELG', 'OGA', 'SH', 'WF']
