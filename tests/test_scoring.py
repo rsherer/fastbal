@@ -89,3 +89,46 @@ class TestScoring(unittest.TestCase):
         self.assertEqual(sc.saves(3), 1)
         self.assertEqual(sc.saves(4), 1)
         self.assertEqual(sc.saves(6), 2)
+
+    def test_yellows(self):
+        self.assertEqual(sc.yellow_cards(0), 0)
+        self.assertEqual(sc.yellow_cards(1), -1)
+        self.assertEqual(sc.yellow_cards(2), -2)
+
+    def test_reds(self):
+        self.assertEqual(sc.red_cards(0), 0)
+        self.assertEqual(sc.red_cards(1), -3)
+
+    def test_own_goals(self):
+        self.assertEqual(sc.own_goal(0), 0)
+        self.assertEqual(sc.own_goal(1), -2)
+        self.assertEqual(sc.own_goal(3), -6)
+
+    def test_tackles(self):
+        self.assertEqual(sc.tackles(0), 0)
+        self.assertEqual(sc.tackles(1), 0)
+        self.assertEqual(sc.tackles(3), 0)
+        self.assertEqual(sc.tackles(4), 1)
+        self.assertEqual(sc.tackles(7), 1)
+        self.assertEqual(sc.tackles(8), 2)
+        self.assertEqual(sc.tackles(11), 2)
+        self.assertEqual(sc.tackles(12), 3)
+
+    def test_passes(self):
+        self.assertEqual(sc.passes(0), 0)
+        self.assertEqual(sc.passes(20), 0)
+        self.assertEqual(sc.passes(35), 1)
+        self.assertEqual(sc.passes(55), 1)
+        self.assertEqual(sc.passes(70), 2)
+        self.assertEqual(sc.passes(75), 2)
+        self.assertEqual(sc.passes(110), 3)
+
+    def test_key_passes(self):
+        self.assertEqual(sc.key_passes(0), 0)
+        self.assertEqual(sc.key_passes(1), 0)
+        self.assertEqual(sc.key_passes(2), 0)
+        self.assertEqual(sc.key_passes(3), 1)
+        self.assertEqual(sc.key_passes(4), 1)
+        self.assertEqual(sc.key_passes(6), 2)
+        self.assertEqual(sc.key_passes(8), 2)
+        self.assertEqual(sc.key_passes(9), 3)
