@@ -1,6 +1,7 @@
 ''' functions used for cleaning data that has been scraped from mlssoccer.com
 '''
 import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
 from typing import List
 
 def remove_negative_scores(stats: List[str]) -> List[str]:
