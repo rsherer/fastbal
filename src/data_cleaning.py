@@ -1,5 +1,6 @@
 ''' functions used for cleaning data that has been scraped from mlssoccer.com
 '''
+import pandas as pd
 from typing import List
 
 def remove_negative_scores(stats: List[str]) -> List[str]:
@@ -47,3 +48,4 @@ def encode_categories(df: pd.DataFrame) -> pd.DataFrame:
     encoded_df = pd.DataFrame(encoded_df, columns=ohe_cols)
     
     return encoded_df
+
