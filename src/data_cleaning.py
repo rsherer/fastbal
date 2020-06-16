@@ -33,3 +33,17 @@ def concat_salary_per_point(stats: List[str]) -> List[str]:
             stats.pop(i + 2)
     return stats
     
+    
+def encode_categories(df: pd.DataFrame) -> pd.DataFrame:
+    '''Will take dataframe and create a one-hot data frame with columns 
+    for all unique values in each column of the dataframe.
+    '''
+    df_cols = [df[col].unique() for col in df.columns]
+    
+    enc = OneHotEncoder(categories=df_cols, handle_unknown='ignore')
+    ohe_cols = [elem for cat in enc.categories for elem in cat]
+    
+    encoded_df = enc.fit_transform(df.values).toarray()
+    encoded_df = pd.DataFrame(encoded_df, columns=ohe_cols)
+    
+    return encoded_df
