@@ -91,3 +91,29 @@ def meta_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
                                         'defense', 'goalie', 'forward')]
     
     return features
+
+def season_feature_target_prep(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    '''Function will take in season_data for all players for all weeks of the 
+    season and convert team, opponent, and the home_away field of the match to 
+    one-hot encoded features.
+    
+    The remaining columns starting with 'pts' (points) ending with 'wf' (was 
+    fouled) will become the targets table that can be used for modeling.
+    '''
+    
+    df.columns = [col.lower() for col in df.columns]
+    
+    # alter the type for all the numerical columns (which will be the target 
+    # array) to int from str
+    for col in df.iloc[:, 7:].columns:
+        df[col] = df[col].str.replace('-', '0', regex=False).astype(int)
+    
+    features = pd.concat([df[['id', 'name', 'rd']],
+                          encode_categories(df[['home_away', 'team']]),
+                          encode_categories(df[['opponent']], True)],
+                          axis = 1).rename(columns={'@': 'away', 'vs': 'home'})
+                         
+    targets = pd.concat([df[['id', 'name', 'rd']], 
+                         df[df.columns[6:]]], axis = 1)
+    
+    return features, targets
