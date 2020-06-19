@@ -2,7 +2,8 @@
 '''
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
-from typing import List
+from typing import List, Tuple
+
 
 def remove_negative_scores(stats: List[str]) -> List[str]:
     '''Check row of game summary data for a hyphen to indicate a negative
@@ -22,7 +23,6 @@ def remove_negative_scores(stats: List[str]) -> List[str]:
             stats[i:] = stats[(i + 1):]
     return stats
 
-
 def concat_salary_per_point(stats: List[str]) -> List[str]:
     '''Used for top stats data, to clean up possibility of raw scraped text
     having a cost per point bisected by a ','. The function will look to see
@@ -34,18 +34,24 @@ def concat_salary_per_point(stats: List[str]) -> List[str]:
             stats[i + 1] = stats[i + 1] + stats[i + 2]
             stats.pop(i + 2)
     return stats
+   
+def encode_categories(df: pd.DataFrame, name_col: bool=False) -> pd.DataFrame:
+    '''Will take dataframe and create a one-hot data frame with columns for 
+    all unique values in each column of the dataframe.
     
-    
-def encode_categories(df: pd.DataFrame) -> pd.DataFrame:
-    '''Will take dataframe and create a one-hot data frame with columns 
-    for all unique values in each column of the dataframe.
+    name_col=True will put 'OPPONENT' in front of the opponent team, to 
+    differentiate it from the player's team.
     '''
     df_cols = [df[col].unique() for col in df.columns]
     
     enc = OneHotEncoder(categories=df_cols, handle_unknown='ignore')
-    ohe_cols = [elem for cat in enc.categories for elem in cat]
-    
     encoded_df = enc.fit_transform(df.values).toarray()
+
+    if name_col:
+        ohe_cols = enc.get_feature_names(df.columns)
+    else:
+        ohe_cols = [elem for cat in enc.categories for elem in cat]
+    
     encoded_df = pd.DataFrame(encoded_df, columns=ohe_cols)
     
     return encoded_df
@@ -80,9 +86,8 @@ def meta_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
 
     features = pd.concat([df[['id', 'name', 'salary']],
                          encode_categories(df[['position']])], axis=1)
-    
-    
+        
     features.columns = [col for col in ('id', 'name', 'salary', 'midfield', 
                                         'defense', 'goalie', 'forward')]
     
-    return features                                      
+    return features
