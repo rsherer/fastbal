@@ -71,12 +71,13 @@ def meta_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
     Preparation includes one-hot encoding the position column, and renaming
     the column from initials to the positions.
     '''
+    
+    df.columns = [col.lower() for col in df.columns]
+
     necessary_columns = ['id', 'name', 'position', 'salary']
     for col in necessary_columns:
         assert col in df.columns, f"col '{col}' not in list of: {df.columns}"
 
-    df.columns = [col.lower() for col in df.columns]
-    
     features = pd.concat([df[['id', 'name', 'salary']],
                          encode_categories(df[['position']])], axis=1)
     
