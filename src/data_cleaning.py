@@ -50,3 +50,38 @@ def encode_categories(df: pd.DataFrame) -> pd.DataFrame:
     
     return encoded_df
 
+def calculate_ytd_fantasy_points(df: pd.DataFrame, 
+                                 game_week: int) -> pd.DataFrame:
+    '''Calculate the year-to-date fantasy points for each player up to and 
+    including the current round. To used specifically with the season stats 
+    dataframe for MLS soccer.
+    '''
+    necessary_columns = ['rd', 'name', 'id', 'pts']
+    for col in necessary_columns:
+        assert col in df.columns, f"col '{col}' not in list of: {df.columns}"
+    
+    # this returns a df with a mulitindex of ['id', 'name']
+    return df[df['rd'] <= game_week][['name', 
+                                      'id',
+                                      'pts']].groupby(['id', 'name']).sum()
+
+def meta_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
+    '''Function will take in a dataframe of meta_data from MLS soccer fantasy 
+    soccer and creates features from the dataframe for use in modeling. 
+    Preparation includes one-hot encoding the position column, and renaming
+    the column from initials to the positions.
+    '''
+    necessary_columns = ['id', 'name', 'position', 'salary']
+    for col in necessary_columns:
+        assert col in df.columns, f"col '{col}' not in list of: {df.columns}"
+
+    df.columns = [col.lower() for col in df.columns]
+    
+    features = pd.concat([df[['id', 'name', 'salary']],
+                         encode_categories(df[['position']])], axis=1)
+    
+    
+    features.columns = [col for col in ('id', 'name', 'salary', 'midfield', 
+                                        'defense', 'goalie', 'forward')]
+    
+    return features                                      
