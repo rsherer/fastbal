@@ -116,7 +116,7 @@ def season_feature_target_prep(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataF
     targets = pd.concat([df[['id', 'name', 'rd']], 
                          df[df.columns[6:]]], axis = 1)
     
-    features.columns = [col.lower() for col in features.columns]
+    features.columns = [col.replace(" ", "_").lower() for col in features.columns]
     targets.columns = [col.lower() for col in targets.columns]
     
     return features, targets
