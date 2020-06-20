@@ -139,5 +139,6 @@ def top_stats_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
     df['price_per_point'] = df['price_per_point'].str.replace(',', '')
     df['price_per_point'] = df['price_per_point'].astype(float)
 
-    return df[['id', 'name', 'games_played', 'total_fantasy_pionts', 
-               'high_score', 'low_score', 'owned_by', 'price_per_point']]
+    return df[['id', 'name', 'games_played', 'avg_fantasy_pts', 
+               'total_fantasy_pts', 'high_score', 'low_score', 'owned_by', 
+               'price_per_point']]
