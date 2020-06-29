@@ -127,17 +127,14 @@ def top_stats_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
     on modeling, features will be added or removed.
     '''
     df = df.rename(columns={'$/point': 'price_per_point'})
-    df['last_wk_fantasy_pts'] = df['last_wk_fantasy_pts'].str.replace('DNP', '0', regex=False)
-    df['last_wk_fantasy_pts'] = pd.to_numeric(df['last_wk_fantasy_pts'], errors='coerce')
+    df['last_wk_fantasy_pts'] = \
+        df['last_wk_fantasy_pts'].str.replace('DNP', '0', regex=False)
+    df['last_wk_fantasy_pts'] = \
+        pd.to_numeric(df['last_wk_fantasy_pts'], errors='coerce')
     df['last_wk_fantasy_pts'].fillna(0, inplace=True)
     df['owned_by'] = df['owned_by'] / 100
-    df['price_per_point'] = df['price_per_point'].str.replace(' ', '')
-    df['price_per_point'] = df['price_per_point'].str.replace("'", "")
-    df['price_per_point'] = df['price_per_point'].str.replace('"', '')
-    df['price_per_point'] = df['price_per_point'].str.replace('$', '')
-    df['price_per_point'] = df['price_per_point'].str.replace('K', '')
-    df['price_per_point'] = df['price_per_point'].str.replace(',', '')
-    df['price_per_point'] = df['price_per_point'].astype(float)
+    df['price_per_point'] = \
+        df['price_per_point'].str.replace('[^0-9]', '', regex=True).astype(int)
 
     return df[['id', 'name', 'games_played', 'avg_fantasy_pts', 
                'total_fantasy_pts', 'high_score', 'low_score', 'owned_by', 
