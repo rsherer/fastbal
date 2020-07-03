@@ -2,6 +2,7 @@
 '''
 from typing import List, Tuple
 import pandas as pd
+import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 
 
@@ -122,9 +123,6 @@ def season_feature_target_prep(df: pd.DataFrame) -> \
                         for col in features.columns]
     targets.columns = [col.lower() for col in targets.columns]
 
-    # if one_table:
-    #     targets.drop(columns=['id'], inplace=True)
-    #     return pd.concat([features, targets], axis=1)
     return features, targets
 
 def top_stats_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
@@ -177,3 +175,17 @@ def merge_data(meta_data_filepath: str,
     season_data_target = season_data_target.sort_values(by=['id'])
 
     return features_merged, season_data_target
+
+def get_data_for_modeling(meta_data_filepath: str,
+               top_data_filepath: str,
+               season_data_filepath: str) -> Tuple[np.array, np.array]:
+    '''Convert pandas dataframes to numpy array to be used for modeling.
+    '''
+    features, targets = merge_data(meta_data_filepath,
+                                  top_data_filepath,
+                                  season_data_filepath)
+
+    features.drop(columns=['id', 'name', 'rd'], inplace=True)
+    targets.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
+
+    return features.values, targets.values
