@@ -171,8 +171,8 @@ def merge_data(meta_data_filepath: str,
 
     features_merged.drop(columns=['name_top', 'name_season'], inplace=True)
 
-    features_merged = features_merged.sort_values(by=['id'])
-    season_data_target = season_data_target.sort_values(by=['id'])
+    features_merged = features_merged.sort_values(by=['id', 'rd'])
+    season_data_target = season_data_target.sort_values(by=['id', 'rd'])
 
     return features_merged, season_data_target
 
