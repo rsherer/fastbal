@@ -17,7 +17,7 @@ def remove_negative_scores(stats: List[str]) -> List[str]:
             'LAST WK FANTASY PTS', '3 WK AVG', '5 WK AVG', 'HIGH SCORE',
             'LOW SCORE', 'OWNED BY', '$/POINT', 'RD 2 RANK', 'SEASON RANK']
 
-    for i, stat in enumerate(stats):
+    for i, _ in enumerate(stats):
         if stats[i] == '-' and stats[i + 1] not in cols:
             stats[i + 1] = '-' + stats[i + 1]
             stats[i:] = stats[(i + 1):]
@@ -29,7 +29,7 @@ def concat_salary_per_point(stats: List[str]) -> List[str]:
     if the cost per point field is following by more than 1 field, concat the
     two and remove the trailing field.
     '''
-    for i, stat in enumerate(stats):
+    for i, _ in enumerate(stats):
         if stats[i] == '$/POINT' and stats[i + 2][:2] != 'RD':
             stats[i + 1] = stats[i + 1] + stats[i + 2]
             stats.pop(i + 2)
@@ -73,7 +73,7 @@ def calculate_ytd_fantasy_points(df: pd.DataFrame,
                                       'pts']].groupby(['id', 'name']).sum()
 
 def meta_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
-    '''Function will take in a dataframe of meta_data from MLS soccer fantasy
+    '''Takes in a dataframe of meta_data from MLS soccer fantasy
     soccer and creates features from the dataframe for use in modeling.
     Preparation includes one-hot encoding the position column, and renaming
     the column from initials to the positions.
@@ -93,9 +93,9 @@ def meta_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
 
     return features
 
-def season_feature_target_prep(df: pd.DataFrame) -> \
+def season_feature_target_prep(df: pd.DataFrame, one_table: bool = False) -> \
                                Tuple[pd.DataFrame, pd.DataFrame]:
-    '''Function will take in season_data for all players for all weeks of the
+    '''Takes in season_data for all players for all weeks of the
     season and convert team, opponent, and the home_away field of the match to
     one-hot encoded features.
 
@@ -118,9 +118,13 @@ def season_feature_target_prep(df: pd.DataFrame) -> \
     targets = pd.concat([df[['id', 'name', 'rd']],
                          df[df.columns[6:]]], axis=1)
 
-    features.columns = [col.replace(" ", "_").lower() for col in features.columns]
+    features.columns = [col.replace(" ", "_").lower()
+                        for col in features.columns]
     targets.columns = [col.lower() for col in targets.columns]
 
+    if one_table:
+        targets.drop(columns=['id'], inplace=True)
+        return pd.concat([features, targets], axis=1)
     return features, targets
 
 def top_stats_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
@@ -141,3 +145,30 @@ def top_stats_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
     return df[['id', 'name', 'games_played', 'avg_fantasy_pts',
                'total_fantasy_pts', 'high_score', 'low_score', 'owned_by',
                'price_per_point']]
+
+def merge_data(meta_data_filepath: str,
+               top_data_filepath: str,
+               season_data_filepath: str,
+               one_table: bool = False) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    '''Take in file locations as strings for each of meta data, top stats
+    data, and season data. Convert to pandas dataframes, clean and transform
+    each accordingly, then merge into a data set used for training.
+    A tuple is returned with the data set and corresponding target data.
+    '''
+    meta_data = meta_feature_prep(pd.read_csv(meta_data_filepath))
+    top_data = top_stats_feature_prep(pd.read_csv(top_data_filepath))
+    season_data = season_feature_target_prep(
+        pd.read_csv(season_data_filepath),
+        one_table=True)
+
+    features_merged = pd.merge(meta_data,
+                               top_data,
+                               how='outer',
+                               left_on='id',
+                               right_on='id',
+                               suffixes=('', '_top')).merge(season_data,
+                                                    how='outer',
+                                                    left_on='id',
+                                                    right_on='id',
+                                                    suffixes=('', '_season'))
+    return features_merged
