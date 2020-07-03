@@ -177,18 +177,24 @@ def merge_data(meta_data_filepath: str,
     return features_merged, season_data_target
 
 def get_data_for_modeling(meta_data_filepath: str,
-               top_data_filepath: str,
-               season_data_filepath: str) -> Tuple[np.array, np.array]:
+                          top_data_filepath: str,
+                          season_data_filepath: str,
+                          rounds: int) -> Tuple[np.array, np.array]:
     '''Convert features and targets pandas dataframes to numpy arrays to be
     used for modeling.
+    Filepaths were data are stored are used for the data transformations.
+    Weeks is an int to retrieve data for the first n rounds of the season,
+    inclusive.
     '''
     features, targets = merge_data(meta_data_filepath,
-                                  top_data_filepath,
-                                  season_data_filepath)
+                                   top_data_filepath,
+                                   season_data_filepath)
 
+    features = features[features['rd'] <= rounds]
     features.drop(columns=['id', 'name', 'rd'], inplace=True)
     features = features.values
+    targets = targets[targets['rd'] <= rounds]
     targets.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
     targets = targets.values
-    
+
     return features, targets
