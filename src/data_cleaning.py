@@ -187,6 +187,8 @@ def get_data_for_modeling(meta_data_filepath: str,
                                   season_data_filepath)
 
     features.drop(columns=['id', 'name', 'rd'], inplace=True)
+    features = features.values
     targets.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
-
-    return features.values, targets.values
+    targets = targets.values
+    
+    return features, targets
