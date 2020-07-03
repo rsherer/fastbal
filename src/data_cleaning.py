@@ -179,7 +179,8 @@ def merge_data(meta_data_filepath: str,
 def get_data_for_modeling(meta_data_filepath: str,
                top_data_filepath: str,
                season_data_filepath: str) -> Tuple[np.array, np.array]:
-    '''Convert pandas dataframes to numpy array to be used for modeling.
+    '''Convert features and targets pandas dataframes to numpy arrays to be
+    used for modeling.
     '''
     features, targets = merge_data(meta_data_filepath,
                                   top_data_filepath,
