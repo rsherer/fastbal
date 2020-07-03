@@ -141,6 +141,7 @@ def top_stats_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
     df['owned_by'] = df['owned_by'] / 100
     df['price_per_point'] = \
         df['price_per_point'].str.replace('[^0-9]', '', regex=True).astype(int)
+    df['price_per_point'] = df['price_per_point'] / 1000
 
     return df[['id', 'name', 'games_played', 'avg_fantasy_pts',
                'total_fantasy_pts', 'high_score', 'low_score', 'owned_by',
@@ -171,5 +172,8 @@ def merge_data(meta_data_filepath: str,
                                                     suffixes=('', '_season'))
 
     features_merged.drop(columns=['name_top', 'name_season'], inplace=True)
+
+    features_merged = features_merged.sort_values(by=['id'])
+    season_data_target = season_data_target.sort_values(by=['id'])
 
     return features_merged, season_data_target
