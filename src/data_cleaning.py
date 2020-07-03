@@ -93,7 +93,7 @@ def meta_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
 
     return features
 
-def season_feature_target_prep(df: pd.DataFrame, one_table: bool = False) -> \
+def season_feature_target_prep(df: pd.DataFrame) -> \
                                Tuple[pd.DataFrame, pd.DataFrame]:
     '''Takes in season_data for all players for all weeks of the
     season and convert team, opponent, and the home_away field of the match to
@@ -122,9 +122,9 @@ def season_feature_target_prep(df: pd.DataFrame, one_table: bool = False) -> \
                         for col in features.columns]
     targets.columns = [col.lower() for col in targets.columns]
 
-    if one_table:
-        targets.drop(columns=['id'], inplace=True)
-        return pd.concat([features, targets], axis=1)
+    # if one_table:
+    #     targets.drop(columns=['id'], inplace=True)
+    #     return pd.concat([features, targets], axis=1)
     return features, targets
 
 def top_stats_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
@@ -148,8 +148,7 @@ def top_stats_feature_prep(df: pd.DataFrame) -> pd.DataFrame:
 
 def merge_data(meta_data_filepath: str,
                top_data_filepath: str,
-               season_data_filepath: str,
-               one_table: bool = False) -> Tuple[pd.DataFrame, pd.DataFrame]:
+               season_data_filepath: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
     '''Take in file locations as strings for each of meta data, top stats
     data, and season data. Convert to pandas dataframes, clean and transform
     each accordingly, then merge into a data set used for training.
@@ -157,18 +156,20 @@ def merge_data(meta_data_filepath: str,
     '''
     meta_data = meta_feature_prep(pd.read_csv(meta_data_filepath))
     top_data = top_stats_feature_prep(pd.read_csv(top_data_filepath))
-    season_data = season_feature_target_prep(
-        pd.read_csv(season_data_filepath),
-        one_table=True)
+    season_data_feat, season_data_target = season_feature_target_prep(
+        pd.read_csv(season_data_filepath))
 
     features_merged = pd.merge(meta_data,
                                top_data,
                                how='outer',
                                left_on='id',
                                right_on='id',
-                               suffixes=('', '_top')).merge(season_data,
+                               suffixes=('', '_top')).merge(season_data_feat,
                                                     how='outer',
                                                     left_on='id',
                                                     right_on='id',
                                                     suffixes=('', '_season'))
-    return features_merged
+
+    features_merged.drop(columns=['name_top', 'name_season'], inplace=True)
+
+    return features_merged, season_data_target
