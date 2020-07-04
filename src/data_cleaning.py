@@ -201,8 +201,8 @@ def get_data_for_modeling(meta_data_filepath: str,
 
     y_train = targets[targets['rd'] <= rounds].copy()
     y_test = targets[targets['rd'] > rounds].copy()
-    y_train.drop(columns=['id', 'name', 'rd'], inplace=True)
-    y_test.drop(columns=['id', 'name', 'rd'], inplace=True)
+    y_train.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
+    y_test.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
     y_train = y_train.values
     y_test = y_test.values
 
