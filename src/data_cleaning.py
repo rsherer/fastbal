@@ -198,14 +198,14 @@ def get_data_for_modeling(meta_data_filepath: str,
     X_test.drop(columns=['id', 'name', 'rd'], inplace=True)
     X_train = X_train.values
     X_test = X_test.values
-    
-    y_train = features[features['rd'] <= rounds].copy()
-    y_test = features[features['rd'] > rounds].copy()
+
+    y_train = targets[targets['rd'] <= rounds].copy()
+    y_test = targets[targets['rd'] > rounds].copy()
     y_train.drop(columns=['id', 'name', 'rd'], inplace=True)
     y_test.drop(columns=['id', 'name', 'rd'], inplace=True)
     y_train = y_train.values
     y_test = y_test.values
-    
+
     # targets = targets[targets['rd'] <= rounds]
     # targets.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
     # targets = targets.values
