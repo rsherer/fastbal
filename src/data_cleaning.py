@@ -179,22 +179,35 @@ def merge_data(meta_data_filepath: str,
 def get_data_for_modeling(meta_data_filepath: str,
                           top_data_filepath: str,
                           season_data_filepath: str,
-                          rounds: int) -> Tuple[np.array, np.array]:
+                          rounds: int) -> \
+                              Tuple[np.array, np.array, np.array, np.array]:
     '''Convert features and targets pandas dataframes to numpy arrays to be
     used for modeling.
     Filepaths were data are stored are used for the data transformations.
-    Weeks is an int to retrieve data for the first n rounds of the season,
-    inclusive.
+    As this is data needs a times series split, the train rounds will retrieve
+    data for the beginning part of the season, inclusive the Weeks is an int
+    to retrieve data for the first n rounds of the season, inclusive.
     '''
     features, targets = merge_data(meta_data_filepath,
                                    top_data_filepath,
                                    season_data_filepath)
 
-    features = features[features['rd'] <= rounds]
-    features.drop(columns=['id', 'name', 'rd'], inplace=True)
-    features = features.values
-    targets = targets[targets['rd'] <= rounds]
-    targets.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
-    targets = targets.values
+    X_train = features[features['rd'] <= rounds].copy()
+    X_test = features[features['rd'] > rounds].copy()
+    X_train.drop(columns=['id', 'name', 'rd'], inplace=True)
+    X_test.drop(columns=['id', 'name', 'rd'], inplace=True)
+    X_train = X_train.values
+    X_test = X_test.values
+    
+    y_train = features[features['rd'] <= rounds].copy()
+    y_test = features[features['rd'] > rounds].copy()
+    y_train.drop(columns=['id', 'name', 'rd'], inplace=True)
+    y_test.drop(columns=['id', 'name', 'rd'], inplace=True)
+    y_train = y_train.values
+    y_test = y_test.values
+    
+    # targets = targets[targets['rd'] <= rounds]
+    # targets.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
+    # targets = targets.values
 
-    return features, targets
+    return X_train, X_test, y_train, y_test
