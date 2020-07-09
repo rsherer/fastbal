@@ -1,6 +1,6 @@
 import numpy as np
 import unittest
-from src import scoring as sc
+from src import scoring_functions as sc
 
 class TestScoring(unittest.TestCase):
     def test_minutes(self):
