@@ -183,10 +183,14 @@ def get_data_for_modeling(meta_data_filepath: str,
                               Tuple[np.array, np.array, np.array, np.array]:
     '''Convert features and targets pandas dataframes to numpy arrays to be
     used for modeling.
+
     Filepaths were data are stored are used for the data transformations.
     As this is data needs a times series split, the train rounds will retrieve
     data for the beginning part of the season, inclusive the Weeks is an int
     to retrieve data for the first n rounds of the season, inclusive.
+
+    Input -> Tuple[meta_data_filepath, top_data_filepath, season_data_filepath]
+    Output -> Tuple[X_train, X_test, y_train, y_test]
     '''
     features, targets = merge_data(meta_data_filepath,
                                    top_data_filepath,
