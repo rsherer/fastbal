@@ -1,6 +1,8 @@
 '''Functions for converting player game statistics into fantasy points.
 '''
-#import numpy as np
+from typing import NamedTuple
+import numpy as np
+
 
 SEASON_STATS_COLUMNS = ['ID', 'NAME', 'TEAM', 'RD', 'HOME_AWAY', 'OPPONENT',
                         'PTS', 'MIN', 'GF', 'A', 'CS', 'PS', 'PE', 'PM', 'GA',
@@ -18,7 +20,7 @@ def minutes_played(minutes: int) -> int:
         return 1
     return 0
 
-def goals_scored(goals: int, position: str) -> int:
+def goals_scored_by_pos(goals: int, position: str) -> int:
     '''Calculate fantasy points for 'GF' column which is goals scored.
     6 points for a goalkeeper or a defender, 5 points for a midfielder
     or forward.
@@ -32,13 +34,21 @@ def goals_scored(goals: int, position: str) -> int:
         return goals * 6
     return goals * 5
 
+def goals_scored(goals: int) -> int:
+    '''This is a experimental function which does not consider position.
+
+    Calculate fantasy points for 'GF' column which is goals scored.
+    6 points for each goal.
+    '''
+    return goals * 5
+
 def assists(assts: int) -> int:
     '''Calculate fantasy points for 'A', which is assists in a match. Each
     assist or secondary assist during a match is 3 points for the player.
     '''
     return assts * 3
 
-def clean_sheet(shutout: int, position: str) -> int:
+def clean_sheet_by_pos(shutout: int, position: str) -> int:
     '''Calculate fantasy points for 'CS', which is for a clean sheet, meaning
     the defense gives up zero goals. A goalkeeper ('G') or a defender ('D')
     will receive 6 points, a midfielder ('M') will receive 1 point.
@@ -55,6 +65,16 @@ def clean_sheet(shutout: int, position: str) -> int:
     if position == 'M':
         return 1
     return 0
+
+def clean_sheet(shutout: int) -> int:
+    '''This is a experimental function which does not consider position.
+
+    Calculate fantasy points for 'CS', which is for a clean sheet, meaning
+    the defense gives up zero goals. Five points for each clean sheet.
+    '''
+    if shutout != 1:
+        return 0
+    return 5
 
 def penalty_save(pen_saves: int) -> int:
     '''Calculate fantasy points for 'PS', penalties saved. Generally
@@ -77,7 +97,7 @@ def penalty_missed(missed: int) -> int:
     '''
     return missed * -2
 
-def goal_against(against: int, position: str) -> int:
+def goal_against_by_pos(against: int, position: str) -> int:
     '''Calculate fantasy points for 'GA', goals scored against the player's
     team. For goalkeepers and defenders, a negative point is earned for every
     two goals against.
@@ -88,6 +108,16 @@ def goal_against(against: int, position: str) -> int:
                 "G", "D", "M", or "F"'
         )
     if position in ['G', 'D'] and against > 1:
+        return (against // 2) * -1
+    return 0
+
+def goal_against(against: int) -> int:
+    '''The is an experimental function where position is not considered.
+
+    Calculate fantasy points for 'GA', goals scored against the player's
+    team. A negative point is earned for every two goals against.
+    '''
+    if against >= 2:
         return (against // 2) * -1
     return 0
 
@@ -199,3 +229,88 @@ def was_fouled(fouls: int) -> int:
     point is earned for every 4 fouls received.
     '''
     return fouls // 4
+
+class PlayerData(NamedTuple):
+    '''NamedTuple which has as attributes match stats for a player for a
+    specific game.
+    '''
+    minutes: float
+    gf: float
+    a: float
+    cs: float
+    ps: float
+    pe: float
+    pm: float
+    ga: float
+    sv: float
+    y: float
+    r: float
+    og: float
+    t: float
+    p: float
+    kp: float
+    crs: float
+    bc: float
+    cl: float
+    blk: float
+    intercept: float
+    br: float
+    elg: float
+    oga: float
+    sh: float
+    wf: float
+
+class PlayerScores(PlayerData):
+    '''PlayerScores takes the stats a player records for a match, and
+    uses those stats to calculate the player's fantasy score for the match.
+    '''
+    def score(self):
+        '''Calculate a player's fantasy score using the stats from the game.
+        '''
+        return (
+            minutes_played(self.minutes)
+            + goals_scored(self.gf)
+            + assists(self.a)
+            + clean_sheet(self.cs)
+            + penalty_save(self.ps)
+            + penalty_earned(self.pe)
+            + penalty_missed(self.pm)
+            + goal_against(self.ga)
+            + saves(self.sv)
+            + yellow_cards(self.y)
+            + red_cards(self.r)
+            + own_goal(self.og)
+            + tackles(self.t)
+            + passes(self.p)
+            + key_passes(self.kp)
+            + crosses(self.crs)
+            + big_chance(self.bc)
+            + clearances(self.cl)
+            + blocks(self.blk)
+            + interceptions(self.intercept)
+            + recovered_balls(self.br)
+            + error_leading_to_goal(self.elg)
+            + own_goal_assist(self.oga)
+            + shots(self.sh)
+            + was_fouled(self.wf)
+        )
+
+class GoalieOrDefender(PlayerScores):
+    def goals_scored(self):
+        return self.gf * 6
+
+class Midfielder(PlayerScores):
+    def clean_sheet(self):
+        if self.cs != 0:
+            return 1
+        return 0
+
+    def goal_against(self):
+        return 0
+
+class Forward(PlayerScores):
+    def clean_sheet(self):
+        return 0
+
+    def goal_against(self):
+        return 0
