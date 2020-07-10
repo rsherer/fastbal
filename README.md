@@ -1,4 +1,4 @@
-# FaSTBAl -> Fantasy Soccer Team By Algorithm
+# fastbal -> Fantasy Soccer Team By Algorithm
 Project to use machine learning to choose an MLS Fantasy soccer team.
 
 This project includes the following sections:
