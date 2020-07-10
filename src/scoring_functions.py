@@ -3,7 +3,7 @@
 from typing import NamedTuple
 import numpy as np
 
-
+# keeping for now, but this global variable likely isn't necessary
 SEASON_STATS_COLUMNS = ['ID', 'NAME', 'TEAM', 'RD', 'HOME_AWAY', 'OPPONENT',
                         'PTS', 'MIN', 'GF', 'A', 'CS', 'PS', 'PE', 'PM', 'GA',
                         'SV', 'Y', 'R', 'OG', 'T', 'P', 'KP', 'CRS', 'BC',
@@ -40,8 +40,9 @@ class PlayerData(NamedTuple):
     fouls_suffered: float
 
 class GoalieOrDefender(PlayerData):
-    '''PlayerScores takes the stats a player records for a match, and
-    uses those stats to calculate the player's fantasy score for the match.
+    '''GoalieOrDefender is the base class for player statse earned during a
+    match, and uses those stats to calculate the player's fantasy score for
+    said match.
     '''
     def minutes_played(self) -> int:
         '''Calculate the number of fantasy points for the 'MIN' column for each
@@ -244,7 +245,7 @@ class GoalieOrDefender(PlayerData):
             self.was_fouled()])
 
 class Midfielder(GoalieOrDefender):
-    '''Midfielder class inherited from base class GoalieOrDefender, with
+    '''Midfielder class inherits from base class GoalieOrDefender, with
     methods overriding for Midfielder-specific scoring.
     '''
     def goals_scored(self) -> int:
@@ -269,7 +270,7 @@ class Midfielder(GoalieOrDefender):
         return 0
 
 class Forward(Midfielder):
-    '''Forward class inherited from Midfielder class, with clean_sheet method
+    '''Forward class inherits from Midfielder class, with clean_sheet method
     writen to always return zero.
     '''
     def clean_sheet(self):
