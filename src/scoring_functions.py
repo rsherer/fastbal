@@ -1,6 +1,6 @@
 '''Functions for converting player game statistics into fantasy points.
 '''
-from typing import NamedTuple
+from typing import NamedTuple, Any
 import numpy as np
 
 # keeping for now, but this global variable likely isn't necessary
@@ -13,31 +13,31 @@ class PlayerData(NamedTuple):
     '''NamedTuple which has as attributes match stats for a player for a
     specific game.
     '''
-    minutes: float
-    goals_for: float
-    assists_earned: float
-    shutout: float
-    pen_save: float
-    pen_earned: float
-    pen_missed: float
-    goals_against: float
-    saves_made: float
-    yellows: float
-    reds: float
-    own_goals: float
-    tackles_made: float
-    passes_completed: float
-    key_passes_made: float
-    crosses_made: float
-    big_chances_created: float
-    clearances_made: float
-    blocks_made: float
-    interceptions_won: float
-    balls_recovered: float
-    error_leading_goal: float
-    own_goal_assists: float
-    shots_taken: float
-    fouls_suffered: float
+    minutes: Any
+    goals_for: Any
+    assists_earned: Any
+    shutout: Any
+    pen_save: Any
+    pen_earned: Any
+    pen_missed: Any
+    goals_against: Any
+    saves_made: Any
+    yellows: Any
+    reds: Any
+    own_goals: Any
+    tackles_made: Any
+    passes_completed: Any
+    key_passes_made: Any
+    crosses_made: Any
+    big_chances_created: Any
+    clearances_made: Any
+    blocks_made: Any
+    interceptions_won: Any
+    balls_recovered: Any
+    error_leading_goal: Any
+    own_goal_assists: Any
+    shots_taken: Any
+    fouls_suffered: Any
 
 class GoalieOrDefender(PlayerData):
     '''GoalieOrDefender is the base class for player statse earned during a
@@ -70,7 +70,7 @@ class GoalieOrDefender(PlayerData):
         '''Calculate fantasy points for 'CS', which is for a clean sheet, meaning
         the defense gives up zero goals. Five points for each clean sheet.
         '''
-        if self.shutout != 0:
+        if self.minutes >= 60 and self.shutout != 0:
             return 5
         return 0
 
@@ -250,22 +250,22 @@ class Midfielder(GoalieOrDefender):
     '''
     def goals_scored(self) -> int:
         '''Calculate fantasy points for 'GF' column which is goals scored.
-        6 points for each goal.
+        Midfielders score 5 points for each goal.
         '''
         return self.goals_for * 5
 
     def clean_sheet(self) -> int:
         '''Calculate fantasy points for 'CS', which is for a clean sheet,
-        meaning the defense gives up zero goals. Five points for each clean
-        sheet.
+        meaning the defense gives up zero goals. Midfielders get 1 point for
+        a clean sheet.
         '''
-        if self.shutout != 0:
+        if self.minutes >= 60 and self.shutout != 0:
             return 1
         return 0
 
     def goal_against(self) -> int:
         '''Calculate fantasy points for 'GA', goals scored against the
-        player's team. A negative point is earned for every two goals against.
+        player's team. Midfielders are not penalized for goals against.
         '''
         return 0
 
