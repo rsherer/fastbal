@@ -184,7 +184,7 @@ def get_data_for_modeling(meta_data_filepath: str,
     '''Convert features and targets pandas dataframes to numpy arrays to be
     used for modeling.
 
-    Filepaths were data are stored are used for the data transformations.
+    Filepaths are where data is stored and used for the data transformations.
     As this is data needs a times series split, the train rounds will retrieve
     data for the beginning part of the season, inclusive the Weeks is an int
     to retrieve data for the first n rounds of the season, inclusive.
@@ -215,3 +215,6 @@ def get_data_for_modeling(meta_data_filepath: str,
     # targets = targets.values
 
     return X_train, X_test, y_train, y_test
+
+
+# test
