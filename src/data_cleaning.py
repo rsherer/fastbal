@@ -215,6 +215,3 @@ def get_data_for_modeling(meta_data_filepath: str,
     # targets = targets.values
 
     return X_train, X_test, y_train, y_test
-
-
-# test
