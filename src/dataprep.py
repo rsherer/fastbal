@@ -6,6 +6,22 @@ import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 
 class DataPrep:
+    '''DataPrep takes in three data sets for MLS Fantasy soccer players:
+        - Meta data, which is information about the player,
+        - Top stats data, which are aggregated or top-level stats for the
+        player, and
+        - Season stats, which are stats for each player for each game.
+
+        The object will store the transformed, expanded, and combined datasets,
+        in order to be used in their respective formats for:
+        - data exploration, 
+        - numpy arrays that will be used to fit machine learning models used
+        for predictions, and
+        - dictionaries of player IDs that have a nested dictionary, per player,
+        with kyes for position, salary, team, and predicted fantasy points.
+        This dictionary will be used for the Linear Programming methodology
+        to determined optimized teams.
+    '''
     def __init__(self,
                  meta: str,
                  top_stats: str,
@@ -121,11 +137,7 @@ class DataPrep:
                 'total_fantasy_pts', 'high_score', 'low_score', 'owned_by',
                 'price_per_point']]
 
-    def merge_data(self
-                # meta_data_filepath: str,
-                # top_data_filepath: str,
-                # season_data_filepath: str
-                ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def merge_data(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
         '''Take in file locations as strings for each of meta data, top stats
         data, and season data. Convert to pandas dataframes, clean and transform
         each accordingly, then merge into a data set used for training.
@@ -156,10 +168,7 @@ class DataPrep:
         return self.season_features_df, self.season_targets_df
 
     def get_data_for_modeling(self,
-                            # meta_data_filepath: str,
-                            # top_data_filepath: str,
-                            # season_data_filepath: str,
-                            rounds: int) -> \
+                              rounds: int) -> \
                                 Tuple[np.array, np.array, np.array, np.array]:
         '''Convert features and targets pandas dataframes to numpy arrays to be
         used for modeling.
@@ -188,8 +197,5 @@ class DataPrep:
         self.y_train = y_train.values
         self.y_test = y_test.values
 
-        # targets = targets[targets['rd'] <= rounds]
-        # targets.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
-        # targets = targets.values
-
         return self.X_train, self.X_test, self.y_train, self.y_test
+
