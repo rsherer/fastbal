@@ -1,6 +1,6 @@
 ''' functions used for cleaning data that has been scraped from mlssoccer.com
 '''
-from typing import List, Tuple
+from typing import Tuple
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
@@ -13,13 +13,22 @@ class DataPrep:
         self.meta = meta
         self.top_stats = top_stats
         self.season = season
+        self.meta_df = None
+        self.top_data_df = None
+        self.season_features_df = None
+        self.season_targets_df = None
+        self.X_train = None
+        self.X_test = None
+        self.y_train = None
+        self.y_test = None
+
 
     def _encode_categories(self,
                            df: pd.DataFrame,
                            name_col: bool = False) -> pd.DataFrame:
         '''Will take dataframe and create a one-hot data frame with columns for
         all unique values in each column of the dataframe.
-        
+    
         name_col=True will put 'OPPONENT' in front of the opponent team, to
         differentiate it from the player's team.
         '''
@@ -163,17 +172,17 @@ class DataPrep:
         Input -> Tuple[meta_data_filepath, top_data_filepath, season_data_filepath]
         Output -> Tuple[X_train, X_test, y_train, y_test]
         '''
-        self.season_features_df, self.season_targets_df = self.merge_data()
+        season_features, season_targets = self.merge_data()
 
-        X_train = self.season_features_df[self.season_features_df['rd'] <= rounds].copy()
-        X_test = self.season_features_df[self.season_features_df['rd'] > rounds].copy()
+        X_train = season_features[season_features['rd'] <= rounds].copy()
+        X_test = season_features[season_features['rd'] > rounds].copy()
         X_train.drop(columns=['id', 'name', 'rd'], inplace=True)
         X_test.drop(columns=['id', 'name', 'rd'], inplace=True)
         self.X_train = X_train.values
         self.X_test = X_test.values
 
-        y_train = self.season_targets_df[self.season_targets_df['rd'] <= rounds].copy()
-        y_test = self.season_targets_df[self.season_targets_df['rd'] > rounds].copy()
+        y_train = season_targets[season_targets['rd'] <= rounds].copy()
+        y_test = season_targets[season_targets['rd'] > rounds].copy()
         y_train.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
         y_test.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
         self.y_train = y_train.values
