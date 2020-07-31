@@ -214,8 +214,13 @@ class DataPrep:
                 game_week].drop(columns=['name', 'rd'])
 
         ids_and_vectors = {player_id: 
-            {'vector': features.loc[features['id'] == player_id].drop(columns=['id']).values}
-            for player_id in features['id']}
+            {'vector': features.loc[features['id'] == 
+                player_id, :].drop(columns=['id']).values,
+             'salary': features.loc[features['id'] == 
+                player_id, :].drop(columns=['id']).values[0][0]
+                }
+                    for player_id in features['id']
+            }
 
         return ids_and_vectors
 
