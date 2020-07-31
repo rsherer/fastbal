@@ -1,6 +1,6 @@
 ''' functions used for cleaning data that has been scraped from mlssoccer.com
 '''
-from typing import Tuple
+from typing import Tuple, Dict
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
@@ -178,7 +178,9 @@ class DataPrep:
         data for the beginning part of the season, inclusive the Weeks is an int
         to retrieve data for the first n rounds of the season, inclusive.
 
-        Input -> Tuple[meta_data_filepath, top_data_filepath, season_data_filepath]
+        Input -> The rounds that will be used for test data (0 to this round
+        number witll be training data, and any rounds above it will be used
+        for test data)
         Output -> Tuple[X_train, X_test, y_train, y_test]
         '''
         season_features, season_targets = self.merge_data()
@@ -198,4 +200,25 @@ class DataPrep:
         self.y_test = y_test.values
 
         return self.X_train, self.X_test, self.y_train, self.y_test
+
+    def get_data_for_predictions(self, game_week: int) -> \
+                                            Dict[int, Dict[str, np.ndarray]]:
+        '''This method will combine three data sets into one, and then
+        transform the data for the game week argument passed in. The method
+        will return a dictionary of dictrionaries that will be used for making
+        predictions for each player. 
+        '''
+        features, _ = self.merge_data()
+
+        features = features[features['rd'] == \
+                game_week].drop(columns=['name', 'rd'])
+
+        ids_and_vectors = {player_id: 
+            {'vector': features.loc[features['id'] == player_id].drop(columns=['id']).values}
+            for player_id in features['id']}
+
+        return ids_and_vectors
+
+
+        
 
