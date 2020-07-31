@@ -110,7 +110,7 @@ class DataPrep:
         targets = pd.concat([df[['id', 'name', 'rd']],
                             df[df.columns[6:]]], axis=1)
 
-        features.columns = [col.replace(" ", "_").lower()
+        features.columns = [col.replace(" ", "_").replace(".", "").lower()
                             for col in features.columns]
         targets.columns = [col.lower() for col in targets.columns]
 
@@ -213,11 +213,17 @@ class DataPrep:
         features = features[features['rd'] == \
                 game_week].drop(columns=['name', 'rd'])
 
+        teams = pd.read_csv(self.meta)
+        teams.columns = [col.replace(" ", "_").replace(".", "").lower()
+                            for col in teams.columns]
+        teams = teams.set_index('id').to_dict('index')
+
         ids_and_vectors = {player_id: 
             {'vector': features.loc[features['id'] == 
                 player_id, :].drop(columns=['id']).values,
              'salary': features.loc[features['id'] == 
-                player_id, :].drop(columns=['id']).values[0][0]
+                player_id, :].drop(columns=['id']).values[0][0],
+             'team': teams[player_id]['team'].replace(" ", "_").replace(".", "").lower()
                 }
                     for player_id in features['id']
             }
