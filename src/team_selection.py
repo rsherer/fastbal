@@ -56,8 +56,9 @@ if __name__ == "__main__":
             *model.predict(v['vector'])[0]
         )
         week2[k]['score'] = player_score.score()
-        week2[k]['position'] = cols[2:6][np.argmax(np.argmax(
-                v['vector'][0][1:5]))]
+        week2[k]['position'] = cols[2:6][np.argmax(
+                v['vector'][0][1:5])]
+    
     print(week2)
 
     
