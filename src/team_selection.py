@@ -41,10 +41,13 @@ if __name__ == "__main__":
     features, _ = dataprep.merge_data()
     cols = features[features['rd'] == 2].drop(columns=['name', 'rd']).columns
 
+    # we know these positions map to the specific position object
     positions_mapping = {'goalie': sc.GoalieOrDefender,
                         'defense': sc.GoalieOrDefender,
                         'midfield': sc.Midfielder,
                         'forward': sc.Forward}
+    # create a comprehension from the cols because the one-hot encoder may
+    # change the order of the positions based on the order of IDs in the table
     position_lookup = {i: positions_mapping[col]
                        for i, col in enumerate(cols[2:6])}
 
@@ -55,7 +58,7 @@ if __name__ == "__main__":
         ](
             *model.predict(v['vector'])[0]
         )
-        week2[k]['score'] = player_score.score()
+        week2[k]['predicted_score'] = player_score.score()
         week2[k]['position'] = cols[2:6][np.argmax(
                 v['vector'][0][1:5])]
     
