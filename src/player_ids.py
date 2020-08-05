@@ -85,11 +85,14 @@ def logout(web_driver: Chrome) -> None:
     
     second_menu.click()
 
-def scrape_team_stats(web_driver: Chrome) -> Dict[str, List[str]]:
+def get_player_ids_dictform(web_driver: Chrome) -> Dict[str, List[str]]:
     '''
     Create a dictionary with the player's MLS Fantasy soccer id as a key in
     a dictionary, and then a list of strings of the player's name and team as 
     the value.
+
+    The web_driver must be one that is logged into the MLS site, else the stat
+     center can't be accessed.
     '''
     player_ids = {}
 
@@ -108,5 +111,35 @@ def scrape_team_stats(web_driver: Chrome) -> Dict[str, List[str]]:
         for tag in soup.select('a.player-name.js-player-modal'):
             player_ids[tag['data-player_id']] = \
                 [' '.join(tag.text.strip('\n').split()[:-6]), TEAMS[team]]
+
+    return player_ids
+
+def get_player_ids_listform(web_driver: Chrome) -> List[List[str]]:
+    '''Function to build a List of the players in MLS, with their MLS Soccer
+    fantasy ID as the key, then a list of their name, and the team the play
+    for as the value.
+    
+    The web_driver must be one that is logged into the MLS site, else the stat
+    center can't be accessed.
+    '''
+    #player_ids = {}
+    
+    player_ids = []
+    
+    select_team = Select(web_driver.find_element_by_id('js-filter-squads'))
+    #select_team.select_by_visible_text(teams[1])
+    
+    for team in range(1, 27):
+        select_team.select_by_visible_text(TEAMS[team])
+
+        html = web_driver.page_source
+        soup = BeautifulSoup(html, 'html.parser')
+
+        for tag in soup.select('a.player-name.js-player-modal'):
+            player_ids.append([tag['data-player_id'],
+                              ' '.join(tag.text.strip('\n').split()[:-6]),
+                              TEAMS[team]])
+#             player_ids[tag['data-player_id']] = \
+#                 [' '.join(tag.text.strip('\n').split()[:-6]), teams[team]]
 
     return player_ids
