@@ -92,7 +92,10 @@ def scrape_team_stats(web_driver: Chrome) -> Dict[str, List[str]]:
     the value.
     '''
     player_ids = {}
-    
+
+    web_driver.find_element_by_link_text('STATS CENTER').click()
+    time.sleep(2)
+
     select_team = Select(web_driver.find_element_by_id('js-filter-squads'))
     select_team.select_by_visible_text(TEAMS[1])
     
