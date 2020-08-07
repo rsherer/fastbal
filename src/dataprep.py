@@ -29,15 +29,6 @@ class DataPrep:
         self.meta = meta
         self.top_stats = top_stats
         self.season = season
-        self.meta_df = None
-        self.top_data_df = None
-        self.season_features_df = None
-        self.season_targets_df = None
-        self.X_train = None
-        self.X_test = None
-        self.y_train = None
-        self.y_test = None
-
 
     def _encode_categories(self,
                            df: pd.DataFrame,
@@ -143,13 +134,13 @@ class DataPrep:
         each accordingly, then merge into a data set used for training.
         A tuple is returned with the data set and corresponding target data.
         '''
-        self.meta_df = self.meta_feature_prep(pd.read_csv(self.meta))
-        self.top_data_df = self.top_stats_feature_prep(pd.read_csv(self.top_stats))
+        meta_df = self.meta_feature_prep(pd.read_csv(self.meta))
+        top_data_df = self.top_stats_feature_prep(pd.read_csv(self.top_stats))
         season_feature_df, season_target_df = \
             self.season_feature_target_prep(pd.read_csv(self.season))
 
-        features_merged = pd.merge(self.meta_df,
-                                self.top_data_df,
+        features_merged = pd.merge(meta_df,
+                                top_data_df,
                                 how='outer',
                                 left_on='id',
                                 right_on='id',
@@ -162,10 +153,10 @@ class DataPrep:
 
         features_merged.drop(columns=['name_top', 'name_season'], inplace=True)
 
-        self.season_features_df = features_merged.sort_values(by=['id', 'rd'])
-        self.season_targets_df = season_target_df.sort_values(by=['id', 'rd'])
+        season_features_df = features_merged.sort_values(by=['id', 'rd'])
+        season_targets_df = season_target_df.sort_values(by=['id', 'rd'])
 
-        return self.season_features_df, self.season_targets_df
+        return season_features_df, season_targets_df
 
     def get_data_for_modeling(self,
                               rounds: int) -> \
@@ -189,19 +180,18 @@ class DataPrep:
         X_test = season_features[season_features['rd'] > rounds].copy()
         X_train.drop(columns=['id', 'name', 'rd'], inplace=True)
         X_test.drop(columns=['id', 'name', 'rd'], inplace=True)
-        self.X_train = X_train.values
-        self.X_test = X_test.values
+        X_train = X_train.values
+        X_test = X_test.values
 
         y_train = season_targets[season_targets['rd'] <= rounds].copy()
         y_test = season_targets[season_targets['rd'] > rounds].copy()
         y_train.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
         y_test.drop(columns=['id', 'name', 'rd', 'pts'], inplace=True)
-        self.y_train = y_train.values
-        self.y_test = y_test.values
+        y_train = y_train.values
+        y_test = y_test.values
 
-        return self.X_train, self.X_test, self.y_train, self.y_test
+        return X_train, X_test, y_train, y_test
 
-### TODO - NEED TO RENAME THIS METHOD, PERHAPS SPLIT IT UP
     def get_data_for_predictions(self, game_week: int) -> \
                                             Dict[int, Dict[str, np.ndarray]]:
         '''This method will combine three data sets into one, and then
@@ -230,7 +220,3 @@ class DataPrep:
             }
 
         return ids_and_vectors
-
-
-        
-
