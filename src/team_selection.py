@@ -439,7 +439,8 @@ for starters, subs in TEAM_SHAPES:
                     subs_df])
 
 for result in results:
-    print(f'team shape {result[0]} starters: \n')
+    print(f'team shape {result[0]} expected points {result[2]} costs {starters_df.salary.sum() + subs_df.salary.sum()}')
+    print(f'starters: \n')
     print(result[4])
     print(f'subs: \n')
     print(result[5])
