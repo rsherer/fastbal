@@ -461,7 +461,7 @@ for result in results:
     print("\n")
 for result in results:
     print(
-        f"team shape {result[0]} has a score of {result[2]}, a total salary of {result[3]}, and status {result[1]}"
+        f"team shape {result[0]} has a score of {result[2]}, a total salary of {starters_df.salary.sum() + subs_df.salary.sum()}, and status {result[1]}"
     )
 
 # score_as_function = solve_lp_problem(salaries,
