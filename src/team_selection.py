@@ -439,11 +439,13 @@ for starters, subs in TEAM_SHAPES:
                     subs_df])
 
 for result in results:
-    print(f'team shape {result[0]} has a score of {result[2]}, a total salary of {result[3]}, and status {result[1]}')
-    print(f'starters: \n')
+    print(f'team shape {result[0]} starters: \n')
     print(result[4])
     print(f'subs: \n')
     print(result[5])
+    print('\n')
+for result in results:
+    print(f'team shape {result[0]} has a score of {result[2]}, a total salary of {result[3]}, and status {result[1]}')
 
 # score_as_function = solve_lp_problem(salaries,
 #                             pred_points,
