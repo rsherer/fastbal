@@ -10,6 +10,7 @@ sys.path.append('.')
 import numpy as np
 import pandas as pd
 import pulp
+import re
 
 from dataprep import DataPrep
 import scoring_functions as sc
@@ -91,7 +92,7 @@ def create_lp_dicts(round_dict: Dict[int, Dict[str, float]]) -> \
     predicted_points = {}
 
     for pos in unique_pos:
-        available = table[table['position'] == pos]
+        available = table[table.position == pos]
         salary = list(available[['player_id', 'salary']].set_index('player_id').to_dict().values())[0]
         point = list(available[['player_id', 'predicted_score']].set_index('player_id').to_dict().values())[0]
         salaries[pos] = salary
@@ -276,8 +277,9 @@ def solve_lp_problem(salaries: Dict[int, Dict[str, int]],
         
         
     # this first line sets up the objective, the second line provides the constraint of the salary cap
-    prob += pulp.lpSum(rewards)
+    
     prob += pulp.lpSum(costs) <= salary_cap
+    prob += pulp.lpSum(rewards)
 
     prob.solve()
     print(f'Status: {pulp.LpStatus[prob.status]}')
@@ -288,74 +290,223 @@ def solve_lp_problem(salaries: Dict[int, Dict[str, int]],
 
     return eval(score)
 
-if __name__ == "__main__":
-    # data file locations
-    meta_str = '../data/metadata/week02/mls_player_metadata_all.csv'
-    top_stats_str = '../data/top_stats/week02/player_top_stats_corrected.csv'
-    season_str = '../data/season_stats/week02/mls_player_stats_all.csv'
-    model_locale = 'baseline_rf.pkl'    
 
-    # get player dictionary
-    dataprepped = DataPrep(meta_str, top_stats_str, season_str)
-    players = create_player_dict(dataprepped, model_locale, 2)
+meta_str = '../data/metadata/week02/mls_player_metadata_all.csv'
+top_stats_str = '../data/top_stats/week02/player_top_stats_corrected.csv'
+season_str = '../data/season_stats/week02/mls_player_stats_all.csv'
+model_locale = 'baseline_rf.pkl'    
 
-    # get LP dictionaries
-    salaries, pred_points, teams = create_lp_dicts(players)
+dataprepped = DataPrep(meta_str, top_stats_str, season_str)
+players = create_player_dict(dataprepped, model_locale, 2)
 
-    _variables = {k: pulp.LpVariable.dicts(k, v, cat='Binary') for k, v in pred_points.items()}
-    _variables_teams = {k: pulp.LpVariable.dicts(k, v, cat='Binary') for k, v in teams.items()}
+salaries, pred_points, teams = create_lp_dicts(players)
 
-    results = []
 
-    for starters, _ in TEAM_SHAPES:
+_variables = {k: pulp.LpVariable.dicts(k, v, cat='Binary') for k, v in pred_points.items()}
+_variables_teams = {k: pulp.LpVariable.dicts(k, v, cat='Binary') for k, v in teams.items()}
 
-        prob = pulp.LpProblem('fastbal', pulp.LpMaximize)
+results = []
 
-        rewards = []
-        costs = []
+for starters, subs in TEAM_SHAPES:
 
-        for k, v in _variables.items():
-            costs += pulp.lpSum([salaries[k][i] * _variables[k][i] for i in v])
-            rewards += pulp.lpSum([pred_points[k][i] * _variables[k][i] for i in v])
-            prob += pulp.lpSum([_variables[k][i] for i in v]) <= starters[k]
+    prob = pulp.LpProblem('fastbal', pulp.LpMaximize)
 
-        for k, v in _variables_teams.items():
-            prob += pulp.lpSum([_variables_teams[k][i] for i in v]) <= players_team_available[k]
+    rewards = []
+    costs = []
 
-        prob += pulp.lpSum(rewards)
-        prob += pulp.lpSum(costs) <= SALARY_CAP
+    for k, v in _variables.items():
+        costs += pulp.lpSum([salaries[k][i] * _variables[k][i] for i in v])
+        rewards += pulp.lpSum([pred_points[k][i] * _variables[k][i] for i in v])
+        prob += pulp.lpSum([_variables[k][i] for i in v]) <= starters[k]
 
-        prob.solve()
-        status = pulp.LpStatus[prob.status]
-        #print(f'Status: {pulp.LpStatus[prob.status]}')
+    for k, v in _variables_teams.items():
+        prob += pulp.lpSum([_variables_teams[k][i] for i in v]) <= players_team_available[k]
 
-        score = str(prob.objective)
-        for v in prob.variables():
-            score = score.replace(v.name, str(v.varValue))
+    prob += pulp.lpSum(rewards)
+    prob += pulp.lpSum(costs) <= SALARY_CAP
 
-#        print(eval(score))
-        playing_shape = ''.join((str(v) for v in starters.values()))[1:]
+    prob.solve()
+    status = pulp.LpStatus[prob.status]
+    #print(f'Status: {pulp.LpStatus[prob.status]}')
 
-        results.append([playing_shape, status, eval(score)])
+    score = str(prob.objective)
+    for v in prob.variables():
+        score = score.replace(v.name, str(v.varValue))
 
-    for result in results:
-        print(f'team shape {result[0]} has a score of {result[2]} and status {result[1]}')
+    # get constraints for the team
+    constraints = [str(const) for const in prob.constraints.values()]
+    for v in prob.variables():
+        constraints = [const.replace(v.name, str(v.varValue)) for const in constraints]
+        if v.varValue != 0:
+            for const in constraints:
+                constraint_readable = " + ".join(re.findall("[0-9\.]*\*1.0", const))
+
+    starter_salaries_total = eval(constraint_readable)
+
+    # to choose the four subs, we go through the LP problem again, first by
+    # removing the starters from all the dictionaries we'll use for the LP
+    # problem, and then use the subs constraint from the respective starters
+    # shape
+
+    team_list = [int(''.join(re.findall('[\d.]+', v.name)))
+                    for v in prob.variables() if v.varValue > 0]
+                    
+    subs_salaries = {k: 
+                {player: sal for player, sal in v.items() if player not in team_list}
+                for k, v in salaries.items()
+               }
+
+    subs_predicted_points = {k:
+                        {player: sal for player, sal in v.items() if player not in team_list}
+                        for k, v in pred_points.items()
+                       }
+
+    subs_team_by_player = {k:
+                     {player: pos for player, pos in v.items() if player not in team_list}
+                     for k, v in teams.items()
+                     }
+
+    # setup the LP problem for the subs
+    _subs_variables = {k: pulp.LpVariable.dicts(k, v, cat='Binary') for k, v in subs_predicted_points.items()}
+    _subs_variables_teams = {k: pulp.LpVariable.dicts(k, v, cat='Binary') for k, v in subs_team_by_player.items()}
+
+    subs_prob = pulp.LpProblem('subs_fastbal', pulp.LpMaximize)
+
+    subs_rewards = []
+    subs_costs = []
+
+    # create the equations for all player variables by position to show costs, and all player variables by position
+    # to show the predicted points. Will set up a constraint for players by position in order to maximize based
+    # on the team shape chosen.
+    for k, v in _subs_variables.items():
+        subs_costs += pulp.lpSum([subs_salaries[k][i] * _subs_variables[k][i] for i in v])
+        subs_rewards += pulp.lpSum([subs_predicted_points[k][i] * _subs_variables[k][i] for i in v])
+        subs_prob += pulp.lpSum([_subs_variables[k][i] for i in v]) <= subs_shape_541[k]
+
+    # create a constraint equation to limit the number of players chose from any single MLS team to 3
+    for k, v in _subs_variables_teams.items():
+        subs_prob += pulp.lpSum([_subs_variables_teams[k][i] for i in v]) <= players_team_available[k]
+        
+        
+    # this first line sets up the objective, the second line provides the constraint of the salary cap
+    subs_prob += pulp.lpSum(subs_rewards)
+    subs_prob += pulp.lpSum(subs_costs) <= SALARY_CAP - starter_salaries_total
+    
+    subs_prob.solve()
+    subs_status = pulp.LpStatus[subs_prob.status]
+    
+    team_list = [int(''.join(re.findall('[\d.]+', v.name)))
+                    for v in prob.variables() if v.varValue > 0]    
+
+    subs_team_list = [int(''.join(re.findall('[\d.]+', v.name)))
+                    for v in subs_prob.variables() if v.varValue > 0]
+    # print dataframes of each team starters and subs
+
+    meta_df = pd.read_csv(meta_str)
+    selected_team = {player_id:
+                {
+                     'name': meta_df[meta_df.ID == player_id].values[0][1],
+                     'position': players[player_id]['position'],
+                     'team': players[player_id]['team'],
+                     'predicted_score': players[player_id]['predicted_score'],
+                     'salary': players[player_id]['salary']
+                }
+            for player_id in team_list
+            }
+
+    starters_df = pd.DataFrame(selected_team).T.sort_values(by='position')
+    
+    subs_team = {player_id:
+                {
+                    'name': meta_df[meta_df.ID == player_id].values[0][1],
+                    'position': players[player_id]['position'],
+                    'team': players[player_id]['team'],
+                    'predicted_score': players[player_id]['predicted_score'],
+                    'salary': players[player_id]['salary']
+                }
+            for player_id in subs_team_list
+            }
+
+    subs_df = pd.DataFrame(subs_team).T.sort_values(by='position')
+
+    playing_shape = ''.join((str(v) for v in starters.values()))[1:]
+  
+    results.append([playing_shape,
+                    status,
+                    eval(score),
+                    starter_salaries_total,
+                    starters_df,
+                    subs_df])
+
+for result in results:
+    print(f'team shape {result[0]} has a score of {result[2]}, a total salary of {result[3]}, and status {result[1]}')
+    print(f'starters: \n')
+    print(result[4])
+    print(f'subs: \n')
+    print(result[5])
+
+# score_as_function = solve_lp_problem(salaries,
+#                             pred_points,
+#                             teams,
+#                             team_shape_541,
+#                             players_team_available,
+#                             SALARY_CAP)
+
+# print(score_as_function)
+
+
+
+# if __name__ == "__main__":
+#     # data file locations
+#     meta_str = '../data/metadata/week02/mls_player_metadata_all.csv'
+#     top_stats_str = '../data/top_stats/week02/player_top_stats_corrected.csv'
+#     season_str = '../data/season_stats/week02/mls_player_stats_all.csv'
+#     model_locale = 'baseline_rf.pkl'    
+
+#     # get player dictionary
+#     dataprepped = DataPrep(meta_str, top_stats_str, season_str)
+#     players = create_player_dict(dataprepped, model_locale, 2)
+
+#     # get LP dictionaries
+#     salaries, pred_points, teams = create_lp_dicts(players)
+
+#     _variables = {k: pulp.LpVariable.dicts(k, v, cat='Binary') for k, v in pred_points.items()}
+#     _variables_teams = {k: pulp.LpVariable.dicts(k, v, cat='Binary') for k, v in teams.items()}
+
+#     results = []
+
+#     for starters, _ in TEAM_SHAPES:
+
+#         prob = pulp.LpProblem('fastbal', pulp.LpMaximize)
+
+#         rewards = []
+#         costs = []
+
+#         for k, v in _variables.items():
+#             costs += pulp.lpSum([salaries[k][i] * _variables[k][i] for i in v])
+#             rewards += pulp.lpSum([pred_points[k][i] * _variables[k][i] for i in v])
+#             prob += pulp.lpSum([_variables[k][i] for i in v]) <= starters[k]
+
+#         for k, v in _variables_teams.items():
+#             prob += pulp.lpSum([_variables_teams[k][i] for i in v]) <= players_team_available[k]
+
+#         prob += pulp.lpSum(rewards)
+#         prob += pulp.lpSum(costs) <= SALARY_CAP
+
+#         prob.solve()
+#         status = pulp.LpStatus[prob.status]
+#         #print(f'Status: {pulp.LpStatus[prob.status]}')
+
+#         score = str(prob.objective)
+#         for v in prob.variables():
+#             score = score.replace(v.name, str(v.varValue))
+
+# #        print(eval(score))
+#         playing_shape = ''.join((str(v) for v in starters.values()))[1:]
+
+#         results.append([playing_shape, status, eval(score)])
+
+#     for result in results:
+#         print(f'team shape {result[0]} has a score of {result[2]} and status {result[1]}')
 
     
-
-    # print(solve_lp_problem(salaries,
-    #                        pred_points,
-    #                        teams,
-    #                        team_shape_352,
-    #                        players_team_available,
-    #                        SALARY_CAP))
-
-    # for starters, _ in TEAM_SHAPES:
-    #     score = solve_lp_problem(salaries,
-    #                     pred_points,
-    #                     teams,
-    #                     starters,
-    #                     players_team_available,
-    #                     125)
-    #     playing_shape = ''.join((str(v) for v in starters.values()))[1:]
-    #     print(f'team shape {playing_shape} has a score of {score}')
