@@ -9,7 +9,7 @@ import requests
 from bs4 import BeautifulSoup
 from selenium.webdriver import Chrome
 
-from typing import List, Tuple
+from typing import List, Tuple, Any
 import copy
 
 import matplotlib.pyplot as plt
@@ -115,7 +115,7 @@ def get_all_player_stats(
     web_driver: Chrome,
     player_ids: List[List[str]],
     week_first: int,
-    week_last: int
+    week_last: int,
 ) -> List[List[str]]:
     """Function to go to the web and pull all players and stats for the players, by week, from the MLS
     Fantasy League website. 
@@ -126,7 +126,7 @@ def get_all_player_stats(
     For player metadata, use string 'div.player-info-wrapper'.
     For player top stats, use string 'div.profile-top-stats'.
     """
-    player_stats = []
+    player_stats: List[List[str]] = []
 
     page_link = "https://fantasy.mlssoccer.com/#stats-center/player-profile/"
 
@@ -171,6 +171,7 @@ def get_all_player_stats(
 # todo: IndexError is the time out error if the page doesn't look quickly enough
 # can use that in the try/except block when refactoring
 
+
 def get_all_player_meta_data(
     web_driver: Chrome, player_ids: List[List[str]]
 ) -> List[List[str]]:
@@ -183,7 +184,7 @@ def get_all_player_meta_data(
     For player metadata, use string 'div.player-info-wrapper'.
     For player top stats, use string 'div.profile-top-stats'."""
 
-    player_data = []
+    player_data: List[List[str]] = []
 
     page_link = "https://fantasy.mlssoccer.com/#stats-center/player-profile/"
 
@@ -234,7 +235,7 @@ def get_all_player_top_stats(
     For player metadata, use string 'div.player-info-wrapper'.
     For player top stats, use string 'div.profile-top-stats'.
     """
-    player_stats = []
+    player_stats: List[List[str]] = []
 
     page_link = "https://fantasy.mlssoccer.com/#stats-center/player-profile/"
 
@@ -260,22 +261,18 @@ def get_all_player_top_stats(
                 f"Scraped {round(100 * len(player_stats) / len(player_ids), 2)}% so far"
             )
         player_stats.append(
-            [player[0]]
-            + [player[1]]
-            + [player[2]]
-            + clean_data(table_text[0])
+            [player[0]] + [player[1]] + [player[2]] + clean_data(table_text[0])
         )
 
     return player_stats
 
 
-
-def get_all_player_data(
+def scrape_all_player_data(
     web_driver: Chrome,
     player_ids: List[List[str]],
     week_first: int,
     week_last: int,
-) -> List[List[str]]:
+) -> Tuple[List[List[Any]], List[List[Any]], List[List[Any]], List[List[Any]]]:
     """Function to go to the web and pull all players stats, by week, from the MLS
     Fantasy League website. 
     Must use a driver that is logged in to the site.
@@ -285,10 +282,10 @@ def get_all_player_data(
     For player metadata, use string 'div.player-info-wrapper'.
     For player top stats, use string 'div.profile-top-stats'.
     """
-    meta_data = [] # from string 'div.player-info-wrapper'
-    top_stats = [] # from 'div.profile-top-stats'
-    weekly_data = [] # from string 'div.row-table'
-    timeout_list = [] # collect all the players that were not scraped
+    meta_data = []  # from string 'div.player-info-wrapper'
+    top_stats = []  # from 'div.profile-top-stats'
+    weekly_data = []  # from string 'div.row-table'
+    timeout_list: List[List[Any]] = []  # collect all the players that were not scraped
 
     cycles = 0
 
@@ -296,7 +293,7 @@ def get_all_player_data(
 
     # taking the list of mls_players, and adding the ID to the end of the page_link string in order to navigate to
     # that page. Can use this to cycle through all the player pages to amass weekly stats
-    for player in player_list:
+    for player in player_ids:
         try:
             web_driver.get(page_link + player[0])
             time.sleep(3)
@@ -313,10 +310,7 @@ def get_all_player_data(
         table_text = [stats.text for stats in table]
 
         top_stats.append(
-            [player[0]]
-            + [player[1]]
-            + [player[2]]
-            + clean_data(table_text[0])
+            [player[0]] + [player[1]] + [player[2]] + clean_data(table_text[0])
         )
 
         # using the beautiful soup object to get the specific player details. will use this over and over to scrape and
@@ -344,7 +338,9 @@ def get_all_player_data(
         # each row will have the player's id, player name, team, information regarding the specific match, and then
         # respective category totals for that match
         for week in range(1, 9):
-            if int(clean_data(table_text[week])[0]) not in range(week_first, week_last + 1):
+            if int(clean_data(table_text[week])[0]) not in range(
+                week_first, week_last + 1
+            ):
                 pass
             else:
                 weekly_data.append(
@@ -357,10 +353,6 @@ def get_all_player_data(
 
         cycles += 1
         if cycles % 25 == 0:
-            print(
-                f"Scraped {round(100 * cycles / len(player_ids), 2)}% so far"
-            )
-    
+            print(f"Scraped {round(100 * cycles / len(player_ids), 2)}% so far")
+
     return meta_data, top_stats, weekly_data, timeout_list
-
-
