@@ -63,7 +63,10 @@ def mls_fantasy_login(login_id: str,
     passcode = driver.find_element_by_name('password')
     passcode.clear()
     passcode.send_keys(password)
+    
     driver.find_element_by_class_name('gigya-input-submit').click()
+    time.sleep(3)
+    driver.find_element_by_link_text('STATS CENTER').click()
     
     return driver
 
