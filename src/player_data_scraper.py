@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from selenium.webdriver import Chrome
 
 from typing import List, Tuple
+import copy
 
 import matplotlib.pyplot as plt
 
@@ -114,7 +115,7 @@ def get_all_player_stats(
     web_driver: Chrome,
     player_ids: List[List[str]],
     week_first: int,
-    week_last: int,
+    week_last: int
 ) -> List[List[str]]:
     """Function to go to the web and pull all players and stats for the players, by week, from the MLS
     Fantasy League website. 
@@ -159,15 +160,16 @@ def get_all_player_stats(
                 [player[0]]
                 + [player[1]]
                 + [player[2]]
-                + pds.update_negative_scores(pds.clean_data(table_text[week]))
-                + [stat for stat in pds.clean_data(table_text[week + 37])[0::2]]
+                + update_negative_scores(clean_data(table_text[week]))
+                + [stat for stat in clean_data(table_text[week + 37])[0::2]]
             )
 
     return player_stats
 
 
 # Now get all the player specific data, id, player name, team, position and current salary
-
+# todo: IndexError is the time out error if the page doesn't look quickly enough
+# can use that in the try/except block when refactoring
 
 def get_all_player_meta_data(
     web_driver: Chrome, player_ids: List[List[str]]
@@ -210,8 +212,8 @@ def get_all_player_meta_data(
             [player[0]]
             + [player[1]]
             + [player[2]]
-            + [pds.get_player_position(pds.clean_data(metadata_text[0]))]
-            + [pds.get_player_salary(pds.clean_data(metadata_text[0]))]
+            + [get_player_position(clean_data(metadata_text[0]))]
+            + [get_player_salary(clean_data(metadata_text[0]))]
         )
     return player_data
 
@@ -261,7 +263,104 @@ def get_all_player_top_stats(
             [player[0]]
             + [player[1]]
             + [player[2]]
-            + pds.clean_data(table_text[0])
+            + clean_data(table_text[0])
         )
 
     return player_stats
+
+
+
+def get_all_player_data(
+    web_driver: Chrome,
+    player_ids: List[List[str]],
+    week_first: int,
+    week_last: int,
+) -> List[List[str]]:
+    """Function to go to the web and pull all players stats, by week, from the MLS
+    Fantasy League website. 
+    Must use a driver that is logged in to the site.
+    Must use the full mls_player_ids which includes ID, player's name, and team for each player.
+    
+    For player weekly_data, use string 'div.row-table'.
+    For player metadata, use string 'div.player-info-wrapper'.
+    For player top stats, use string 'div.profile-top-stats'.
+    """
+    meta_data = [] # from string 'div.player-info-wrapper'
+    top_stats = [] # from 'div.profile-top-stats'
+    weekly_data = [] # from string 'div.row-table'
+    timeout_list = [] # collect all the players that were not scraped
+
+    cycles = 0
+
+    page_link = "https://fantasy.mlssoccer.com/#stats-center/player-profile/"
+
+    # taking the list of mls_players, and adding the ID to the end of the page_link string in order to navigate to
+    # that page. Can use this to cycle through all the player pages to amass weekly stats
+    for player in player_list:
+        try:
+            web_driver.get(page_link + player[0])
+            time.sleep(3)
+        except IndexError:
+            player.append(timeout_list)
+
+        # on the specific player page, create a page object for beautifulsoup to parse for the content
+        html = web_driver.page_source
+        soup = BeautifulSoup(html, "html.parser")
+
+        # using the beautiful soup object to get the specific player details. will use this over and over to scrape and
+        # store all the players top level data
+        table = soup.select("div.profile-top-stats")
+        table_text = [stats.text for stats in table]
+
+        top_stats.append(
+            [player[0]]
+            + [player[1]]
+            + [player[2]]
+            + clean_data(table_text[0])
+        )
+
+        # using the beautiful soup object to get the specific player details. will use this over and over to scrape and
+        # store all the players meta data
+        player_metadata = soup.select("div.player-info-wrapper")
+        metadata_text = [meta.text for meta in player_metadata]
+        # now we go through and clean up the meta data, and include it in the new table with each player
+        meta_data.append(
+            [player[0]]
+            + [player[1]]
+            + [player[2]]
+            + [get_player_position(clean_data(metadata_text[0]))]
+            + [get_player_salary(clean_data(metadata_text[0]))]
+        )
+
+        # using the beautiful soup object to get the specific player details. will use this over and over to scrape and
+        # store all the players data
+        table = soup.select("div.row-table")
+        table_text = [stats.text for stats in table]
+
+        # in table_text, index 1 is the first game of the season in terms of info on the game, and index 12
+        # (so index i + 11) is the associated per category stats for that match
+        # **** NEED TO MONITOR THE INDEX SPREAD AS THE WEBSITE UPDATES AND THE NUMBER OF LISTED MATCHES CHANGES ****
+        # **** THE SPREAD IS HARDCODED IN THE FOR BLOCK ****
+        # each row will have the player's id, player name, team, information regarding the specific match, and then
+        # respective category totals for that match
+        for week in range(1, 9):
+            if int(clean_data(table_text[week])[0]) not in range(week_first, week_last + 1):
+                pass
+            else:
+                weekly_data.append(
+                    [player[0]]
+                    + [player[1]]
+                    + [player[2]]
+                    + update_negative_scores(clean_data(table_text[week]))
+                    + [stat for stat in clean_data(table_text[week + 11])[0::2]]
+                )
+
+        cycles += 1
+        if cycles % 25 == 0:
+            print(
+                f"Scraped {round(100 * cycles / len(player_ids), 2)}% so far"
+            )
+    
+    return meta_data, top_stats, weekly_data, timeout_list
+
+
