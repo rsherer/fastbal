@@ -112,10 +112,7 @@ def get_player_info(raw_player_data: List[str]) -> Tuple[str, float]:
 
 
 def get_all_player_stats(
-    web_driver: Chrome,
-    player_ids: List[List[str]],
-    week_first: int,
-    week_last: int,
+    web_driver: Chrome, player_ids: List[List[str]], week_first: int, week_last: int,
 ) -> List[List[str]]:
     """Function to go to the web and pull all players and stats for the players, by week, from the MLS
     Fantasy League website. 
@@ -267,11 +264,8 @@ def get_all_player_top_stats(
     return player_stats
 
 
-def scrape_all_player_data(
-    web_driver: Chrome,
-    player_ids: List[List[str]],
-    week_first: int,
-    week_last: int,
+def scrape_player_data(
+    web_driver: Chrome, player_ids: List[List[str]], week_first: int, week_last: int,
 ) -> Tuple[List[List[Any]], List[List[Any]], List[List[Any]], List[List[Any]]]:
     """Function to go to the web and pull all players stats, by week, from the MLS
     Fantasy League website. 
@@ -296,7 +290,7 @@ def scrape_all_player_data(
     for player in player_ids:
         try:
             web_driver.get(page_link + player[0])
-            time.sleep(3)
+            time.sleep(2)
         except IndexError:
             player.append(timeout_list)
 
@@ -356,3 +350,26 @@ def scrape_all_player_data(
             print(f"Scraped {round(100 * cycles / len(player_ids), 2)}% so far")
 
     return meta_data, top_stats, weekly_data, timeout_list
+
+
+def cycle_all_player_ids(
+    web_driver: Chrome, player_ids: List[List[str]], week_first: int, week_last: int,
+) -> Tuple[List[List[Any]], List[List[Any]], List[List[Any]]]:
+    """Create a loop to make sure all eligible stats are collected for the 
+    week game range"""
+    meta, top, weekly, time_out = scrape_player_data(
+        web_driver, player_ids, week_first, week_last
+    )
+
+    loop = 0
+    while len(time_out) > 0:
+        print(f"loop number {loop}")
+        meta_rerun, top_rerun, weekly_rerun, time_out = scrape_player_data(
+            web_driver, time_out, week_first, week_last
+        )
+        meta += meta_rerun
+        top += top_rerun
+        weekly += weekly_rerun
+
+    return meta, top, weekly
+    
