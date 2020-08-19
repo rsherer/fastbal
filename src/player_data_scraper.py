@@ -112,7 +112,10 @@ def get_player_info(raw_player_data: List[str]) -> Tuple[str, float]:
 
 
 def get_all_player_stats(
-    web_driver: Chrome, player_ids: List[List[str]], week_first: int, week_last: int,
+    web_driver: Chrome,
+    player_ids: List[List[str]],
+    week_first: int,
+    week_last: int,
 ) -> List[List[str]]:
     """Function to go to the web and pull all players and stats for the players, by week, from the MLS
     Fantasy League website. 
@@ -265,7 +268,10 @@ def get_all_player_top_stats(
 
 
 def scrape_player_data(
-    web_driver: Chrome, player_ids: List[List[str]], week_first: int, week_last: int,
+    web_driver: Chrome,
+    player_ids: List[List[str]],
+    week_first: int,
+    week_last: int,
 ) -> Tuple[List[List[Any]], List[List[Any]], List[List[Any]], List[List[Any]]]:
     """Function to go to the web and pull all players stats, by week, from the MLS
     Fantasy League website. 
@@ -279,7 +285,9 @@ def scrape_player_data(
     meta_data = []  # from string 'div.player-info-wrapper'
     top_stats = []  # from 'div.profile-top-stats'
     weekly_data = []  # from string 'div.row-table'
-    timeout_list: List[List[Any]] = []  # collect all the players that were not scraped
+    timeout_list: List[
+        List[Any]
+    ] = []  # collect all the players that were not scraped
 
     cycles = 0
 
@@ -331,7 +339,9 @@ def scrape_player_data(
         # **** THE SPREAD IS HARDCODED IN THE FOR BLOCK ****
         # each row will have the player's id, player name, team, information regarding the specific match, and then
         # respective category totals for that match
-        for week in range(1, 9):
+        weeknums = int((len(table_text) - 5) / 2)
+
+        for week in range(1, weeknums + 1):
             if int(clean_data(table_text[week])[0]) not in range(
                 week_first, week_last + 1
             ):
@@ -353,7 +363,10 @@ def scrape_player_data(
 
 
 def cycle_all_player_ids(
-    web_driver: Chrome, player_ids: List[List[str]], week_first: int, week_last: int,
+    web_driver: Chrome,
+    player_ids: List[List[str]],
+    week_first: int,
+    week_last: int,
 ) -> Tuple[List[List[Any]], List[List[Any]], List[List[Any]]]:
     """Create a loop to make sure all eligible stats are collected for the 
     week game range"""
@@ -363,6 +376,7 @@ def cycle_all_player_ids(
 
     loop = 0
     while len(time_out) > 0:
+        loop += 1
         print(f"loop number {loop}")
         meta_rerun, top_rerun, weekly_rerun, time_out = scrape_player_data(
             web_driver, time_out, week_first, week_last
@@ -372,4 +386,3 @@ def cycle_all_player_ids(
         weekly += weekly_rerun
 
     return meta, top, weekly
-    
