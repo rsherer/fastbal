@@ -264,10 +264,10 @@ def solve_lp_problem(
 
     return eval(score)
 
-
-meta_str = "../data/metadata/week02/mls_player_metadata_all.csv"
-top_stats_str = "../data/top_stats/week02/player_top_stats_corrected.csv"
-season_str = "../data/season_stats/week02/mls_player_stats_all.csv"
+# using data collected 19Aug2020
+meta_str = '../data/metadata/meta_stats_aug17.csv'
+top_stats_str = '../data/top_stats/corrected_top_stats_aug17.csv'
+season_str = '../data/season_stats/season_stats_aug17.csv'
 model_locale = "baseline_rf.pkl"
 
 dataprepped = DataPrep(meta_str, top_stats_str, season_str)
