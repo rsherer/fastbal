@@ -13,6 +13,8 @@ import pandas as pd
 import pulp
 import re
 
+import torch
+
 from dataprep import DataPrep
 import scoring_functions as sc
 
@@ -58,16 +60,24 @@ def create_player_dict(
         "midfield": sc.Midfielder,
         "forward": sc.Forward,
     }
-    score_type_lookup = {
-        i: positions_mapping[col] for i, col in enumerate(cols[2:6])
-    }
+    score_type_lookup = {i: positions_mapping[col] for i, col in enumerate(cols[2:6])}
 
-    model = get_pickled_model(filename)
+    # random forest model can be uploaded this way
+    # model = get_pickled_model(filename)
+
+    # pytorch model upload this way
+    # uploading the pytorch model
+    model = torch.load(filename)
+    model.eval()
+
     week = formatted_data.get_data_for_predictions(game)
 
     for k, v in week.items():
         player_score = score_type_lookup[np.argmax(v["vector"][0][1:5])](
-            *model.predict(v["vector"])[0]
+            # for use with random forest model
+            # *model.predict(v["vector"])[0]
+            # for use with pytorch neural network
+            *(model.forward(torch.from_numpy(v["vector"][0]).float()).detach().numpy())
         )
         week[k]["predicted_score"] = player_score.score()
         week[k]["position"] = cols[2:6][np.argmax(v["vector"][0][1:5])]
@@ -77,9 +87,7 @@ def create_player_dict(
 def create_lp_dicts(
     round_dict: Dict[int, Dict[str, float]]
 ) -> Tuple[
-    Dict[str, Dict[int, str]],
-    Dict[str, Dict[int, float]],
-    Dict[str, Dict[int, str]],
+    Dict[str, Dict[int, str]], Dict[str, Dict[int, float]], Dict[str, Dict[int, str]],
 ]:
     """Data wrangling with a pandas and dictionary comprehensions to
     organize data into suitable formats to solve the Linear Programming
@@ -99,10 +107,7 @@ def create_lp_dicts(
     for pos in unique_pos:
         available = table[table.position == pos]
         salary = list(
-            available[["player_id", "salary"]]
-            .set_index("player_id")
-            .to_dict()
-            .values()
+            available[["player_id", "salary"]].set_index("player_id").to_dict().values()
         )[0]
         point = list(
             available[["player_id", "predicted_score"]]
@@ -114,16 +119,14 @@ def create_lp_dicts(
         predicted_points[pos] = point
 
     team_by_player = {
-        team: {
-            k: v["position"] for k, v in round_dict.items() if v["team"] == team
-        }
+        team: {k: v["position"] for k, v in round_dict.items() if v["team"] == team}
         for team in unique_team
     }
 
     return salaries, predicted_points, team_by_player
 
 
-SQAUD_POS_NUM_AVAILABLE = {
+SQUAD_POS_NUM_AVAILABLE = {
     "goalie": 2,
     "defense": 5,
     "midfield": 5,
@@ -137,7 +140,6 @@ subs_shape_352 = {"goalie": 1, "defense": 2, "midfield": 0, "forward": 1}
 team_shape_343 = {"goalie": 1, "defense": 3, "midfield": 4, "forward": 3}
 
 subs_shape_343 = {"goalie": 1, "defense": 2, "midfield": 1, "forward": 0}
-
 
 team_shape_451 = {"goalie": 1, "defense": 4, "midfield": 5, "forward": 1}
 
@@ -233,22 +235,15 @@ def solve_lp_problem(
     # to show the predicted points. Will set up a constraint for players by position in order to maximize based
     # on the team shape chosen.
     for k, v in _player_variables.items():
-        costs += pulp.lpSum(
-            [salaries[k][i] * _player_variables[k][i] for i in v]
-        )
+        costs += pulp.lpSum([salaries[k][i] * _player_variables[k][i] for i in v])
         rewards += pulp.lpSum(
             [predicted_points[k][i] * _player_variables[k][i] for i in v]
         )
-        prob += (
-            pulp.lpSum([_player_variables[k][i] for i in v]) <= team_shape[k]
-        )
+        prob += pulp.lpSum([_player_variables[k][i] for i in v]) <= team_shape[k]
 
     # create a constraint equation to limit the number of players chose from any single MLS team to 3
     for k, v in _team_variables.items():
-        prob += (
-            pulp.lpSum([_team_variables[k][i] for i in v])
-            <= players_per_team[k]
-        )
+        prob += pulp.lpSum([_team_variables[k][i] for i in v]) <= players_per_team[k]
 
     # this first line sets up the objective, the second line provides the constraint of the salary cap
 
@@ -264,14 +259,16 @@ def solve_lp_problem(
 
     return eval(score)
 
+
 # using data collected 19Aug2020
-meta_str = '../data/metadata/meta_stats_aug17.csv'
-top_stats_str = '../data/top_stats/corrected_top_stats_aug17.csv'
-season_str = '../data/season_stats/season_stats_aug17.csv'
-model_locale = "baseline_rf.pkl"
+meta_str = "../data/metadata/meta_stats_aug17.csv"
+top_stats_str = "../data/top_stats/corrected_top_stats_aug17.csv"
+season_str = "../data/season_stats/season_stats_aug17.csv"
+# model_locale = "baseline_rf.pkl"
+model_locale = "../models/nn_3layers.pt"
 
 dataprepped = DataPrep(meta_str, top_stats_str, season_str)
-players = create_player_dict(dataprepped, model_locale, 2)
+players = create_player_dict(dataprepped, model_locale, 3)
 
 salaries, pred_points, teams = create_lp_dicts(players)
 
@@ -299,8 +296,7 @@ for starters, subs in TEAM_SHAPES:
 
     for k, v in _variables_teams.items():
         prob += (
-            pulp.lpSum([_variables_teams[k][i] for i in v])
-            <= players_team_available[k]
+            pulp.lpSum([_variables_teams[k][i] for i in v]) <= players_team_available[k]
         )
 
     prob += pulp.lpSum(rewards)
@@ -317,14 +313,10 @@ for starters, subs in TEAM_SHAPES:
     # get constraints for the team
     constraints = [str(const) for const in prob.constraints.values()]
     for v in prob.variables():
-        constraints = [
-            const.replace(v.name, str(v.varValue)) for const in constraints
-        ]
+        constraints = [const.replace(v.name, str(v.varValue)) for const in constraints]
         if v.varValue != 0:
             for const in constraints:
-                constraint_readable = " + ".join(
-                    re.findall("[0-9\.]*\*1.0", const)
-                )
+                constraint_readable = " + ".join(re.findall("[0-9\.]*\*1.0", const))
 
     starter_salaries_total = eval(constraint_readable)
 
@@ -379,9 +371,7 @@ for starters, subs in TEAM_SHAPES:
         subs_rewards += pulp.lpSum(
             [subs_predicted_points[k][i] * _subs_variables[k][i] for i in v]
         )
-        subs_prob += (
-            pulp.lpSum([_subs_variables[k][i] for i in v]) <= subs_shape_541[k]
-        )
+        subs_prob += pulp.lpSum([_subs_variables[k][i] for i in v]) <= subs_shape_541[k]
 
     # create a constraint equation to limit the number of players chose from any single MLS team to 3
     for k, v in _subs_variables_teams.items():
