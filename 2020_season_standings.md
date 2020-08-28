@@ -17,6 +17,7 @@ each week.
 
 
 **NOTES**
+
     ```
     - The machine learning model and optimization were completed in time for
     week three of the actual fantasy season. So week 1 of the ABC week is
