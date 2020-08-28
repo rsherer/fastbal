@@ -1,11 +1,11 @@
 # 2020 Season Standings and weekly results
 
 The ABC league includes the following teams and managers:
-
+```
 - fastball FC, managed by the fastbal optimizer
 - Zidane's Forehead, managed by Robert Sherer
 - seagullane, managed by the MLS Fantasy Soccer randomizer
-
+```
 For the remainder of the 2020 season, the most recent weekly scores will be
 posted here, as well as tables for 1) YTD Total Points and 2) Head-to-Head
 points, where 3 points is a win, 1 point a draw, and 0 points for a lost. Since
