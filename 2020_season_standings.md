@@ -30,9 +30,11 @@ each week.
     2.      fastbal             78
     3.      Zidane's Forehead   48
 
-### Week 2 Scores
+#### Week 2 Scores
     Rank    Team                Points
-    ```IN PROGRESS```
+    ```
+    IN PROGRESS
+    ```
 
 **NOTES**
 
