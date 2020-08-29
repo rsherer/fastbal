@@ -24,7 +24,7 @@ each week.
     2.      fastbal             3               156         136
     3.      Zidane's Forehead   0               96          166
 
-### Week 1 Scores
+#### Week 1 Scores
     Rank    Team                Points
     1.      seagullane          88
     2.      fastbal             78
