@@ -32,9 +32,9 @@ each week.
 
 #### Week 2 Scores
     Rank    Team                Points
-    ```
+```
     IN PROGRESS
-    ```
+```
 
 **NOTES**
 
