@@ -14,9 +14,9 @@ each week.
 
 ## Total Points for the Season
     Rank    Team                Total Score     Most Recent Score
-    1.      seagullane          158             70
-    2.      fastbal             147             69
-    3.      Zidane's Forehead   127             79
+    1.      seagullane          316             70
+    2.      fastbal             294             69
+    3.      Zidane's Forehead   254             79
 
 ## Head-To-Head Standings
     Rank    Team                Points          YTD For     YTD Against
