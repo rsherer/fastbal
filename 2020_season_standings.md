@@ -14,24 +14,30 @@ each week.
 
 ## Total Points for the Season
     Rank    Team                Total Score     Most Recent Score
-    1.      seagullane          88              88
-    2.      fastbal             78              78
-    3.      Zidane's Forehead   48              48
+    1.      seagullane          158             70
+    2.      fastbal             147             69
+    3.      Zidane's Forehead   127             79
 
 ## Head-To-Head Standings
     Rank    Team                Points          YTD For     YTD Against
-    1.      seagullane          6               176         126
-    2.      fastbal             3               156         136
-    3.      Zidane's Forehead   0               96          166
+    1.      seagullane          9               316         274
+    2.      Zidane's Forehead   6               254         305
+    3.      fastbal             3               294         285
+
 
 #### Week 1 Scores
-    Rank    Team                Points
-    1.      seagullane          88
-    2.      fastbal             78
-    3.      Zidane's Forehead   48
+    Rank    Team                Points  H2H     Week For    Week Against
+    1.      seagullane          88      6       176         126
+    2.      fastbal             78      3       156         136
+    3.      Zidane's Forehead   48      0       96          166
 
 #### Week 2 Scores
-    Rank    Team                Points
+    Rank    Team                Points  H2H     Week For    Week Against
+    1.      Zidane's Forehead   79      6       158         139
+    2.      seagullane          70      3       140         148
+    3.      fastbal             69      0       138         149
+
+#### Week 3 Scores
 ```
     *IN PROGRESS*
 ```
