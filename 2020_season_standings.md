@@ -47,7 +47,7 @@ each week.
 - Week 1
 ```
 - The machine learning model and optimization were completed in time for
-week three of the actual fantasy season. So week 1 of the ABC week is
+week three of the actual fantasy season. So week 1 of the ABC League is
 week 3 of the MLS Fantasy Soccer season.
 - For week 1 ABC League predictions, a Random Forest model was used.
 - For week 2 ABC League predictions, a two-layer neural network was used.
