@@ -4,6 +4,8 @@ page of https://fantasy.mlssoccer.com/#stats-center"""
 import pandas as pd
 import numpy as np
 
+import data_cleaning as dc
+
 import time
 import requests
 from bs4 import BeautifulSoup
@@ -11,8 +13,6 @@ from selenium.webdriver import Chrome
 
 from typing import List, Tuple, Any
 import copy
-
-import matplotlib.pyplot as plt
 
 
 def clean_data(text: str) -> List[str]:
@@ -106,11 +106,6 @@ def get_player_info(raw_player_data: List[str]) -> Tuple[str, float]:
 
 #### - the following functions go to the website and scrape data for players
 
-
-# todo - refactor function to take appropriate div class, based on scraping for weekly data, updated metadata,
-# or updated top stats data
-
-
 def get_all_player_stats(
     web_driver: Chrome,
     player_ids: List[List[str]],
@@ -136,7 +131,7 @@ def get_all_player_stats(
         # print(page_link)
         # print(player[0])
         web_driver.get(page_link + player[0])
-        time.sleep(5)
+        time.sleep(2)
 
         # on the specific player page, create a page object for beautifulsoup to parse for the content
         html = web_driver.page_source
@@ -194,7 +189,7 @@ def get_all_player_meta_data(
         # print(page_link)
         # print(player[0])
         web_driver.get(page_link + player[0])
-        time.sleep(5)
+        time.sleep(2)
 
         # on the specific player page, create a page object for beautifulsoup to parse for the content
         html = web_driver.page_source
@@ -245,7 +240,7 @@ def get_all_player_top_stats(
         # print(page_link)
         # print(player[0])
         web_driver.get(page_link + player[0])
-        time.sleep(5)
+        time.sleep(2)
 
         # on the specific player page, create a page object for beautifulsoup to parse for the content
         html = web_driver.page_source
@@ -311,9 +306,12 @@ def scrape_player_data(
         table = soup.select("div.profile-top-stats")
         table_text = [stats.text for stats in table]
 
-        top_stats.append(
-            [player[0]] + [player[1]] + [player[2]] + clean_data(table_text[0])
-        )
+        try:
+            top_stats.append(
+                [player[0]] + [player[1]] + [player[2]] + clean_data(table_text[0])
+            )
+        except IndexError:
+            player.append(timeout_list)
 
         # using the beautiful soup object to get the specific player details. will use this over and over to scrape and
         # store all the players meta data
@@ -327,6 +325,14 @@ def scrape_player_data(
             + [get_player_position(clean_data(metadata_text[0]))]
             + [get_player_salary(clean_data(metadata_text[0]))]
         )
+
+        # TODO - add a block here to check a player's availability status
+        # it's an i class that has 'status playing' in an element
+        # can use the soup object, so:
+        # status = soup.find_all('i')
+        # for iclass in status:
+        #     if 'status playing' in str(iclass):
+        #         NEED SOME WAY TO KEEP TRACK/DETERMINE THIS LATER       
 
         # using the beautiful soup object to get the specific player details. will use this over and over to scrape and
         # store all the players data
@@ -361,6 +367,11 @@ def scrape_player_data(
 
     return meta_data, top_stats, weekly_data, timeout_list
 
+# these are the column names that should be added to the top, meta, and weekly
+# stats after they've been scraped
+TOP_STATS_COLUMNS = 'id,name,team,games_played,avg_fantasy_pts,total_fantasy_pts,last_wk_fantasy_pts,3_wk_avg,5_wk_avg,high_score,low_score,owned_by,$/point,rd_2_rank,season_rank'
+SEASON_STATS_COLUMNS = 'ID,NAME,TEAM,RD,HOME_AWAY,OPPONENT,PTS,MIN,GF,A,CS,PS,PE,PM,GA,SV,Y,R,OG,T,P,KP,CRS,BC,CL,BLK,INT,BR,ELG,OGA,SH,WF'
+META_STATS_COLUMNS = 'ID,name,team,position,salary'
 
 def cycle_all_player_ids(
     web_driver: Chrome,
@@ -382,7 +393,17 @@ def cycle_all_player_ids(
             web_driver, time_out, week_first, week_last
         )
         meta += meta_rerun
-        top += top_rerun
+        top += top_rerun    
         weekly += weekly_rerun
 
+    top = [dc.remove_negative_scores(player) for player in top]
+    top = [player[:2] + player[2::2] for player in top]
+
     return meta, top, weekly
+
+
+# TODO - post cycle scrape clean up
+# the top variable needs the following steps:
+# import data_cleaning as dc 
+# updated_top = [dc.remove_negative_scores(player) for player in top]
+# updated_top = [player[:2] + player[2::2] for player in updated_top]
