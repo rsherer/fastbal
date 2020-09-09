@@ -261,14 +261,30 @@ def solve_lp_problem(
 
 
 # using data collected 19Aug2020
-meta_str = "../data/metadata/meta_stats_aug17.csv"
-top_stats_str = "../data/top_stats/corrected_top_stats_aug17.csv"
-season_str = "../data/season_stats/season_stats_aug17.csv"
+# meta_str = "../data/metadata/meta_stats_aug27.csv"
+# top_stats_str = "../data/top_stats/top_stats_aug27.csv"
+# season_str = "../data/season_stats/season_stats_aug27.csv"
 # model_locale = "baseline_rf.pkl"
-model_locale = "../models/nn_3layers.pt"
+
+# data scraped on aug 30th, ahead of week 5 of the season
+# meta_str = "../data/metadata/meta_stats_sep4.csv"
+# top_stats_str = "../data/top_stats/top_stats_sep4.csv"
+# season_str = "../data/season_stats/season_stats_sep4.csv"
+
+# data scraped on Sep 8th, ahead of week 6 of the season
+# meta_str = "../data/metadata/meta_stats_sep8.csv"
+# top_stats_str = "../data/top_stats/top_stats_sep8.csv"
+# season_str = "../data/season_stats/season_stats_sep8.csv"
+
+# data scraped on Sep 8th, removing some injured players
+meta_str = "../data/metadata/meta_stats_injuries_removed_sep8.csv"
+top_stats_str = "../data/top_stats/top_stats_injuries_removed_sep8.csv"
+season_str = "../data/season_stats/season_stats_injuries_removed_sep8.csv"
+
+model_locale = "../models/nn_3layers_sep4.pt"
 
 dataprepped = DataPrep(meta_str, top_stats_str, season_str)
-players = create_player_dict(dataprepped, model_locale, 3)
+players = create_player_dict(dataprepped, model_locale, 6)
 
 salaries, pred_points, teams = create_lp_dicts(players)
 
@@ -371,7 +387,7 @@ for starters, subs in TEAM_SHAPES:
         subs_rewards += pulp.lpSum(
             [subs_predicted_points[k][i] * _subs_variables[k][i] for i in v]
         )
-        subs_prob += pulp.lpSum([_subs_variables[k][i] for i in v]) <= subs_shape_541[k]
+        subs_prob += pulp.lpSum([_subs_variables[k][i] for i in v]) <= subs[k]
 
     # create a constraint equation to limit the number of players chose from any single MLS team to 3
     for k, v in _subs_variables_teams.items():
