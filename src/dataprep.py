@@ -63,26 +63,23 @@ class DataPrep:
 
         necessary_columns = ["id", "name", "position", "salary"]
         for col in necessary_columns:
-            assert (
-                col in df.columns
-            ), f"col '{col}' not in list of: {df.columns}"
+            assert col in df.columns, f"col '{col}' not in list of: {df.columns}"
 
         features = pd.concat(
-            [
-                df[["id", "name", "salary"]],
-                self._encode_categories(df[["position"]]),
-            ],
+            [df[["id", "name", "salary"]], self._encode_categories(df[["position"]]),],
             axis=1,
         )
 
+        positions_mapping = {
+            "G": "goalie",
+            "D": "defense",
+            "M": "midfield",
+            "F": "forward",
+        }
+
         features.columns = [
-            "id",
-            "name",
-            "salary",
-            "midfield",
-            "defense",
-            "goalie",
-            "forward",
+            positions_mapping[col] if col in positions_mapping.keys() else col
+            for col in features.columns
         ]
 
         return features
@@ -114,13 +111,10 @@ class DataPrep:
             axis=1,
         ).rename(columns={"@": "away", "vs": "home"})
 
-        targets = pd.concat(
-            [df[["id", "name", "rd"]], df[df.columns[6:]]], axis=1
-        )
+        targets = pd.concat([df[["id", "name", "rd"]], df[df.columns[6:]]], axis=1)
 
         features.columns = [
-            col.replace(" ", "_").replace(".", "").lower()
-            for col in features.columns
+            col.replace(" ", "_").replace(".", "").lower() for col in features.columns
         ]
         targets.columns = [col.lower() for col in targets.columns]
 
@@ -141,9 +135,7 @@ class DataPrep:
         df["last_wk_fantasy_pts"].fillna(0, inplace=True)
         df["owned_by"] = df["owned_by"] / 100
         df["price_per_point"] = (
-            df["price_per_point"]
-            .str.replace("[^0-9]", "", regex=True)
-            .astype(int)
+            df["price_per_point"].str.replace("[^0-9]", "", regex=True).astype(int)
         )
         df["price_per_point"] = df["price_per_point"] / 1000
 
@@ -239,14 +231,11 @@ class DataPrep:
         """
         features, _ = self.merge_data()
 
-        features = features[features["rd"] == game_week].drop(
-            columns=["name", "rd"]
-        )
+        features = features[features["rd"] == game_week].drop(columns=["name", "rd"])
 
         teams = pd.read_csv(self.meta)
         teams.columns = [
-            col.replace(" ", "_").replace(".", "").lower()
-            for col in teams.columns
+            col.replace(" ", "_").replace(".", "").lower() for col in teams.columns
         ]
         teams = teams.set_index("id").to_dict("index")
 
