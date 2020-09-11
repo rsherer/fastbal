@@ -3,12 +3,22 @@ Using machine learning and linear programming to choose an MLS Fantasy soccer te
 
 ## This project includes the following sections:
 
-  * Web scraping to get stats from each week of fantasy soccer
+  * [Data Collection](#data-collection)
   * Data transformation for use in modeling
   * Modeling and cross validation
   * Linear Programming to guide team selection based on model predictions
   * [Acknowledgements](#acknowledgments)
 
+
+## Data Collection
+
+Training data and target data was collected by scraping data from the fantasy.mlssoccer.com website.
+
+## Data Transforms
+
+## Modeling and Cross Validation
+
+## Linear Programming
 
 ## Acknowledgments
 
