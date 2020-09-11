@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # fastbal -> FAntasy Soccer Team By ALgorithm
+=======
+# fastbal -> FAntasy Soccer Team By Algorithm
+>>>>>>> 826926c5dc965092b12f1aafd5ce0330800515c6
 Using machine learning and linear programming to choose an MLS Fantasy soccer team.
 
 This project includes the following sections:
