@@ -33,7 +33,6 @@ def clean_data(text: str) -> List[str]:
             word = ""
     return row
 
-
 def update_negative_scores(game: List) -> List:
     """Check row of game summary data for a hyphen to indicate a negative score, 
     and then update the row for the negative score for the game, and correct 
@@ -45,13 +44,6 @@ def update_negative_scores(game: List) -> List:
         game[4] = "-" + game[4]
         game[3:] = game[4:]
     return game
-
-
-def get_weekly_info(page_table_obj, week: int) -> List[str]:
-    pass
-    # return clean_data(page_table_obj[week]) +
-    # [int(entry) for entry in clean_data(page_table_obj[week + 37])[0::2]]
-
 
 def get_player_salary(player_info: str) -> float:
     """Method will receive the raw string from the player's info and return 
@@ -69,7 +61,6 @@ def get_player_salary(player_info: str) -> float:
             return float(sal)
     return float(sal)
 
-
 def get_player_team(player_info: str) -> str:
     """Method will receive the raw string from the player's info and return 
     the team as a str
@@ -79,7 +70,6 @@ def get_player_team(player_info: str) -> str:
     assert len(player_info[0]) > 0, "input cannot be empty"
 
     return player_info[0]
-
 
 def get_player_position(player_info: str) -> str:
     """Method will receive the raw string from the player's info and return 
@@ -95,14 +85,6 @@ def get_player_position(player_info: str) -> str:
     assert len(player_info[1]) > 0, "input cannot be empty"
 
     return player_info[1][0]
-
-
-def get_player_info(raw_player_data: List[str]) -> Tuple[str, float]:
-    """Will receive a string and break out the team position, player salary, 
-    weekly salary change, and season salary change
-    """
-    pass
-
 
 #### - the following functions go to the website and scrape data for players
 
@@ -161,11 +143,9 @@ def get_all_player_stats(
 
     return player_stats
 
-
 # Now get all the player specific data, id, player name, team, position and current salary
 # todo: IndexError is the time out error if the page doesn't look quickly enough
 # can use that in the try/except block when refactoring
-
 
 def get_all_player_meta_data(
     web_driver: Chrome, player_ids: List[List[str]]
@@ -213,10 +193,8 @@ def get_all_player_meta_data(
         )
     return player_data
 
-
 # todo - refactor function to take appropriate div class, based on scraping for weekly data, updated metadata,
 # or updated top stats data
-
 
 def get_all_player_top_stats(
     web_driver: Chrome, player_ids: List[List[str]]
@@ -260,7 +238,6 @@ def get_all_player_top_stats(
         )
 
     return player_stats
-
 
 def scrape_player_data(
     web_driver: Chrome,
