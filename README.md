@@ -12,7 +12,7 @@ Using machine learning and linear programming to choose an MLS Fantasy soccer te
 
 ## Data Collection
 
-Training data and target data was collected by scraping data from the fantasy.mlssoccer.com website.
+Training data and target data was collected by scraping data from the [MLS Fantasy Soccer](fantasy.mlssoccer.com) website.
 
 ## Data Transforms
 
