@@ -12,7 +12,7 @@ Using machine learning and linear programming to choose an MLS Fantasy soccer te
 
 ## Acknowledgments
 
-I leaned heavily on a [blog post](https://medium.com/ml-everything/using-python-and-linear-programming-to-optimize-fantasy-football-picks-dc9d1229db81) by [Branko Blagojevic](https://github.com/breeko) and the [Blending Problem](https://coin-or.github.io/pulp/CaseStudies/a_blending_problem.html) case study in the [PuLP Library](https://coin-or.github.io/pulp/index.html) to figure out
-how to build the solver for the optimization portion of the project. Thanks also to
+I leaned heavily on a [blog post](https://medium.com/ml-everything/using-python-and-linear-programming-to-optimize-fantasy-football-picks-dc9d1229db81) by [Branko Blagojevic](https://github.com/breeko) and the [Blending Problem](https://coin-or.github.io/pulp/CaseStudies/a_blending_problem.html) case study in the [PuLP Library](https://coin-or.github.io/pulp/index.html) to
+build the solver for the optimization portion of the project. Thanks also to
 [madrury](https://github.com/madrury) for pointing me in the direction of using
 linear programming to find the optimal teams given the constraints of the MLS Fantasy Soccer game.
