@@ -5,3 +5,4 @@ scikit-learn
 pytorch
 selenium
 bs4 (BeautifulSoup)
+pulp
