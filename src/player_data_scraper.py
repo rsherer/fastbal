@@ -323,6 +323,7 @@ def scrape_player_data(
         # each row will have the player's id, player name, team, information regarding the specific match, and then
         # respective category totals for that match
         weeknums = int((len(table_text) - 5) / 2)
+        skips = int((len(table_text) // 2 + 1))
 
         for week in range(1, weeknums + 1):
             if int(clean_data(table_text[week])[0]) not in range(
@@ -335,7 +336,7 @@ def scrape_player_data(
                     + [player[1]]
                     + [player[2]]
                     + update_negative_scores(clean_data(table_text[week]))
-                    + [stat for stat in clean_data(table_text[week + 11])[0::2]]
+                    + [stat for stat in clean_data(table_text[week + skips])[0::2]]
                 )
 
         cycles += 1
