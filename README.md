@@ -1,6 +1,8 @@
 # fastbal -> FAntasy Soccer Team By ALgorithm
 Using machine learning and linear programming to choose an MLS Fantasy soccer team.
 
+![fastbal team from week 3](img/fastbal_team_week3.png)
+
 ## This project includes the following sections:
 
   * [Data Collection](#data-collection)
