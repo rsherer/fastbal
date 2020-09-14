@@ -45,7 +45,34 @@ team's point total.
 
 ## Data Collection
 
-Training data and target data was collected by scraping data from the [MLS Fantasy Soccer](https://fantasy.mlssoccer.com) website.
+Once an account has been created, training data and target data can be collected by 
+scraping data from the [MLS Fantasy Soccer](https://fantasy.mlssoccer.com) website.
+
+First a player list of ids can be constructed with the following steps:
+
+```
+import player_ids as pi
+import player_data_scraper as pds
+
+login, pwd = 'your_mls_fantasy_login', 'your_fantasy_password'
+driver = pi.mls_fantasy_login(login, pwd)
+player_list = pi.get_player_ids_listform(driver)
+```
+
+As of August 2020, there is a quirk that Miguel Ibarra (who doesn't play much, which is
+a bummer because he's a great player and I'm a Sounders fan) has some data that
+is not inputted properly on the MLS Fantasy stats pages. For the scraper to work properly,
+I remove him from the player list to continue.
+
+Each player is a list with `id, name, team`, so the following will remove him from
+the variable `player_list`:
+
+```
+for idx, player in player_list:
+    if "Ibarra" in player[1]:
+        ibarra = idx
+player_list.pop(ibarra)
+```
 
 ## Data Transforms
 
