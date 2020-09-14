@@ -1,16 +1,13 @@
 # fastbal -> FAntasy Soccer Team By ALgorithm
 Using machine learning and linear programming to choose an MLS Fantasy soccer team.
 
-![fastbal team from week 3](img/fastbal_team_week3.png)
-
 ## This project includes the following sections:
 
   * [Data Collection](#data-collection)
   * Data transformation for use in modeling
   * Modeling and cross validation
-  * Linear Programming to guide team selection based on model predictions
+  * [Linear Programming to guide team selection based on model predictions](#linear-programming)
   * [Acknowledgements](#acknowledgments)
-
 
 ## Data Collection
 
@@ -21,6 +18,8 @@ Training data and target data was collected by scraping data from the [MLS Fanta
 ## Modeling and Cross Validation
 
 ## Linear Programming
+
+![fastbal team from week 3](img/fastbal_team_week3.png)
 
 ## Acknowledgments
 
