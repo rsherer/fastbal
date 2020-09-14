@@ -378,9 +378,3 @@ def cycle_all_player_ids(
 
     return meta, top, weekly
 
-
-# TODO - post cycle scrape clean up
-# the top variable needs the following steps:
-# import data_cleaning as dc 
-# updated_top = [dc.remove_negative_scores(player) for player in top]
-# updated_top = [player[:2] + player[2::2] for player in updated_top]
