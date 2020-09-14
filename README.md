@@ -5,8 +5,8 @@ Using machine learning and linear programming to choose an MLS Fantasy soccer te
 
   * [Overview](#overview)
   * [Data Collection](#data-collection)
-  * Data transformation for use in modeling
-  * Modeling and cross validation
+  * [Data transformation for use in modeling](#data-transforms)
+  * [Modeling and cross validation](#modeling-and-cross-validation)
   * [Linear Programming to guide team selection based on model predictions](#linear-programming)
   * [Acknowledgements](#acknowledgments)
 
