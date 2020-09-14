@@ -81,11 +81,37 @@ top level data, and season stats for each player for weeks 1 through 5 in this e
 meta, top, weekly = pds.cycle_all_player_ids(driver, player_list, 1, 5)
 ```
 
-Feel free to store the data any way you prefer. The `player_data_scraper` file has 
-the column headers as the global variables: `TOP_STATS_COLUMNS`, `SEASON_STATS_COLUMNS`,
-`META_STATS_COLUMNS` available with the respective columns.
+Feel free to store the data any way you prefer. I have been saving the variables to
+`.csv` files, and then prepending the global variables: `TOP_STATS_COLUMNS`, `SEASON_STATS_COLUMNS`,
+`META_STATS_COLUMNS` available in the `player_data_scraper.py` file.
 
 ## Data Transforms
+
+The file `dataprep.py` will create an object that will merge the top, meta, and weekly
+data together for use in modeling. Providing file paths to each of the datasets
+collected above will process the data for modeling.
+
+```
+import dataprep as dp
+meta_data_location = 'meta_filepath'
+top_data_location = 'top_filepath'
+weekly_data_location = 'weekly_filepath'
+
+dataprepped = dp.Dataprep(meta_data_location, top_data_location, weekly_data_location)
+```
+
+If you want to use data from the first 5 rounds of the season in your modeling, you can run the following script:
+
+```
+X_train, X_test, y_train, y_test = dataprepped.get_data_for_modeling(5)
+```
+
+For exploring the features and targets I've chosen for modeling, you can run the following
+script:
+
+```
+features, targets = dataprepped.merge_data()
+```
 
 ## Modeling and Cross Validation
 
