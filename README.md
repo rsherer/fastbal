@@ -64,8 +64,8 @@ a bummer because he's a great player and I'm a Sounders fan) has some data that
 is not inputted properly on the MLS Fantasy stats pages. For the scraper to work properly,
 I remove him from the player list to continue.
 
-Each player is a list with `id, name, team`, so the following will remove him from
-the variable `player_list`:
+Each player is a list of strings in the format `id, name, team`, so the following script
+will remove him from the variable `player_list`:
 
 ```
 for idx, player in player_list:
@@ -73,6 +73,17 @@ for idx, player in player_list:
         ibarra = idx
 player_list.pop(ibarra)
 ```
+
+After which, to scrape the website, the following will script will scrape the meta data,
+top level data, and season stats for each player for weeks 1 through 5 in this example:
+
+```
+meta, top, weekly = pds.cycle_all_player_ids(driver, player_list, 1, 5)
+```
+
+Feel free to store the data any way you prefer. The `player_data_scraper` file has 
+the column headers as the global variables: `TOP_STATS_COLUMNS`, `SEASON_STATS_COLUMNS`,
+`META_STATS_COLUMNS` available with the respective columns.
 
 ## Data Transforms
 
