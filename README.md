@@ -146,7 +146,12 @@ or minimum for the problem.
 
 Each week, the `team_selection.py` file can be run and will provide the optimal starters
 and subs given the score predictions for each player that week, the constraint of the player's
-salary, and finally the league rules about positions and teams.
+salary, and finally the league rules about positions and teams. Having links to the three
+respective files for `top`, `meta`, and `season` data, along with the the model used for
+predictions, will allow the file to run properly. Dictionaries of all variables - meaning
+players as affiliated by their positions and the teams for which they play - are built
+and added to the `problem` object in order to be applied to a **PuLP** linear programming
+solver to find the optimal player selections.
 
 For the `fastbal` team, I used the team shape make-up that predicted the highest
 team total for the week, and then selected those players. I filtered only players
