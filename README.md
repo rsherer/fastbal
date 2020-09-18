@@ -19,7 +19,7 @@ join a league, and through various rules, construct teams of players in that lea
 and earn points based on the specific rules for the fantasy league. Fantasy Football
 and Fantasy Baseball are probably the largest fantasy leagues in the US.
 
-For several years, I have played in fantasy soccer leagues, in both the English Premier
+For several years, I have played in fantasy soccer leagues, with players for the English Premier
 League, and here in the US with Major League Soccer (MLS). I was spending many hours
 each week trying to choose a team, and decided to build a model to automate that process.
 
@@ -139,7 +139,7 @@ list tells which models are used for which week.
 
 ## Linear Programming
 
-Linear Programming can be used to choose a team for each week. The **PuLP** library
+Linear Programming can be used to choose a team for each week. The [**PuLP**](https://coin-or.github.io/pulp/index.html) library
 offers the ability to create a `problem` object, to which constraints can be added
 using the `+=` python syntax, and then a final objective that asks to find the maximum
 or minimum for the problem.
@@ -165,5 +165,5 @@ The result each week looks like the following team:
 
 I leaned heavily on a [blog post](https://medium.com/ml-everything/using-python-and-linear-programming-to-optimize-fantasy-football-picks-dc9d1229db81) by [Branko Blagojevic](https://github.com/breeko) and the [Blending Problem](https://coin-or.github.io/pulp/CaseStudies/a_blending_problem.html) case study in the [PuLP Library](https://coin-or.github.io/pulp/index.html) to
 build the solver for the optimization portion of the project. Thanks also to
-[madrury](https://github.com/madrury) for pointing me in the direction of using
+[Matt Drury](https://github.com/madrury) for pointing me in the direction of using
 linear programming to find the optimal teams given the constraints of the MLS Fantasy Soccer game.
