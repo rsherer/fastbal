@@ -81,9 +81,9 @@ top level data, and season stats for each player for weeks 1 through 5 in this e
 meta, top, weekly = pds.cycle_all_player_ids(driver, player_list, 1, 5)
 ```
 
-Feel free to store the data any way you prefer. I have been saving the variables to
-`.csv` files, and then prepending the global variables: `TOP_STATS_COLUMNS`, `SEASON_STATS_COLUMNS`,
-`META_STATS_COLUMNS` available in the `player_data_scraper.py` file.
+Save the variables variables to `.csv` files, and then prepending the global variables:
+`TOP_STATS_COLUMNS`, `SEASON_STATS_COLUMNS`, `META_STATS_COLUMNS` available in
+the `player_data_scraper.py` file.
 
 ## Data Transforms
 
@@ -114,6 +114,28 @@ features, targets = dataprepped.merge_data()
 ```
 
 ## Modeling and Cross Validation
+
+After looking at a Random Forest as a baseline, I used [PyTorch](https://pytorch.org/) to
+build neural networks that had 1, 2, and 3, linear layers, with ReLU activation
+layers in between. With 66 dimensions in and 25 dimensions out, the network had
+the following layers:
+
+  * First layer with 128 hidden dimensions
+  * Second layer with 48 hidden dimensions
+  * Third layer with 32 hidden dimensions
+
+To prevent leakage, the training set uses weeks from the beginning of the season,
+and the test set uses weeks from later in the season. For example, for week 7, the training
+set used data from weeks 1 through 4, and data from weeks 5 and 6 for the test set. MSE
+on the output vector is used for minimizing the model error.
+
+Every 3-4 weeks, as data accumulates, models are retrained and the model with the
+lowest training error is used for predictions over the upcoming weeks. The following
+list tells which models are used for which week.
+
+  * For week 1, a random forest was used for player score predictions.
+  * For weeks 2 through 5, the 3 layer neural network was used for predictions.
+  * For week 7, the 2 layers neural network was used for predictions.
 
 ## Linear Programming
 
