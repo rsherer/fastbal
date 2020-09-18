@@ -277,14 +277,26 @@ def solve_lp_problem(
 # season_str = "../data/season_stats/season_stats_sep8.csv"
 
 # data scraped on Sep 8th, removing some injured players
-meta_str = "../data/metadata/meta_stats_injuries_removed_sep8.csv"
-top_stats_str = "../data/top_stats/top_stats_injuries_removed_sep8.csv"
-season_str = "../data/season_stats/season_stats_injuries_removed_sep8.csv"
+# meta_str = "../data/metadata/meta_stats_injuries_removed_sep8.csv"
+# top_stats_str = "../data/top_stats/top_stats_injuries_removed_sep8.csv"
+# season_str = "../data/season_stats/season_stats_injuries_removed_sep8.csv"
 
-model_locale = "../models/nn_3layers_sep4.pt"
+# data scraped on Sep 14th, ahead of week 7 of the season
+# meta_str = "../data/metadata/meta_stats_week7_sep14.csv"
+# top_stats_str = "../data/top_stats/top_stats_week7_sep14.csv"
+# season_str = "../data/season_stats/season_stats_week7_sep14.csv"
+
+# data scraped Sep 14th, filtered for only players who have played at least 1 minute
+meta_str = "../data/metadata/meta_stats_have_played_week7.csv"
+top_stats_str = "../data/top_stats/top_stats_have_played_week7.csv"
+season_str = "../data/season_stats/season_stats_have_played_week7.csv"
+
+#model_locale = "../models/nn_3layers_sep4.pt"
+#model_locale = "../models/nn_3layers_week7_sep14.pt"
+model_locale = "../models/nn_2layers_sep17.pt"
 
 dataprepped = DataPrep(meta_str, top_stats_str, season_str)
-players = create_player_dict(dataprepped, model_locale, 6)
+players = create_player_dict(dataprepped, model_locale, 7)
 
 salaries, pred_points, teams = create_lp_dicts(players)
 
