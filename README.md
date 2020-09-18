@@ -139,6 +139,26 @@ list tells which models are used for which week.
 
 ## Linear Programming
 
+Linear Programming can be used to choose a team for each week. The **PuLP** library
+offers the ability to create a `problem` object, to which constraints can be added
+using the `+=` python syntax, and then a final objective that asks to find the maximum
+or minimum for the problem.
+
+Each week, the `team_selection.py` file can be run and will provide the optimal starters
+and subs given the score predictions for each player that week, the constraint of the player's
+salary, and finally the league rules about positions and teams.
+
+For the `fastbal` team, I used the team shape make-up that predicted the highest
+team total for the week, and then selected those players. I filtered only players
+who have played at least 1 minute during the season, to avoid bench players being selected
+when they won't have the chance to earn points. The [standings for the 2020 season](https://github.com/rsherer/fastbal/blob/master/2020_season_standings.md) update the three teams in the league:
+
+  * fastball FC, managed by the fastbal optimizer
+  * Zidane's Forehead, managed by Robert Sherer
+  * seagullane, managed by the MLS Fantasy Soccer randomizer
+
+The result each week looks like the following team:
+
 ![fastbal team from week 3](img/fastbal_team_week3.png)
 
 ## Acknowledgments
