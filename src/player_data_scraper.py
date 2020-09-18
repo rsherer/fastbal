@@ -311,17 +311,13 @@ def scrape_player_data(
         #     if 'status playing' in str(iclass):
         #         NEED SOME WAY TO KEEP TRACK/DETERMINE THIS LATER       
 
-        # using the beautiful soup object to get the specific player details. will use this over and over to scrape and
-        # store all the players data
+        # using the beautiful soup object to get the specific player details.
+        # will use this over and over to scrape and store all the players data
         table = soup.select("div.row-table")
         table_text = [stats.text for stats in table]
 
-        # in table_text, index 1 is the first game of the season in terms of info on the game, and index 12
-        # (so index i + 11) is the associated per category stats for that match
-        # **** NEED TO MONITOR THE INDEX SPREAD AS THE WEBSITE UPDATES AND THE NUMBER OF LISTED MATCHES CHANGES ****
-        # **** THE SPREAD IS HARDCODED IN THE FOR BLOCK ****
-        # each row will have the player's id, player name, team, information regarding the specific match, and then
-        # respective category totals for that match
+        # each row will have the player's id, player name, team, information regarding
+        # the specific match, and then respective category totals for that match
         weeknums = int((len(table_text) - 5) / 2)
         skips = int((len(table_text) // 2 + 1))
 
