@@ -28,6 +28,11 @@ each week.
 #### Week 6 Scores
 ```
     *IN PROGRESS*
+
+    Rank    Team                Points  H2H     Week For    Week Against
+    1.      Zidane's Forehead   72      -       -           -
+    2.      seagullane          59      -       -           -
+    3.      fastbal             34      -       -           -
 ```
 #### Week 5 Scores
     Rank    Team                Points  H2H     Week For    Week Against
