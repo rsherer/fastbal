@@ -21,7 +21,7 @@ MIDFIELD3 = [57, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 20, 0, 16, 16, 0, 20, 6, 0, 25
 MIDFIELD4 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 21, 21]
 FORWARD1 =  [90, 3, 3, 1, 2, 2, 2, 3, 2, 2, 1, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 24]
 FORWARD2 =  [57, 1, 1, 1, 1, 1, 1, 5, 1, 1, 0, 0, 27, 145, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-FORWARD3 =  [0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 28, 155, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0]
+FORWARD3 =  [0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 28, 175, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0]
 
 class TestScoring(unittest.TestCase):
     def setUp(self):
@@ -234,39 +234,100 @@ class TestScoring(unittest.TestCase):
         self.assertEqual(self.d4.saves(), 1)
         self.assertNotEqual(self.d4.saves(), 2)
 
+    def test_yellows(self):
+        self.assertEqual(self.g1.yellow_cards(), -2)
+        self.assertNotEqual(self.g1.yellow_cards(), 0)
+        self.assertEqual(self.g2.yellow_cards(), -1)
+        self.assertNotEqual(self.g2.yellow_cards(), 0)
+        self.assertEqual(self.g3.yellow_cards(), 0)
+        self.assertNotEqual(self.g3.yellow_cards(), -1)
+        self.assertEqual(self.g4.yellow_cards(), 0)
+        self.assertNotEqual(self.g4.yellow_cards(), -1)
 
-    # def test_yellows(self):
-    #     self.assertEqual(sc.yellow_cards(0), 0)
-    #     self.assertEqual(sc.yellow_cards(1), -1)
-    #     self.assertEqual(sc.yellow_cards(2), -2)
+    def test_reds(self):
+        self.assertEqual(self.g1.red_cards(), -3)
+        self.assertNotEqual(self.g1.red_cards(), 0)
+        self.assertEqual(self.g2.red_cards(), 0)
+        self.assertNotEqual(self.g2.red_cards(), -3)
+        self.assertEqual(self.g3.red_cards(), -3)
+        self.assertNotEqual(self.g3.red_cards(), 0)
+        self.assertEqual(self.g4.red_cards(), 0)
+        self.assertNotEqual(self.g4.red_cards(), -3)
 
-    # def test_reds(self):
-    #     self.assertEqual(sc.red_cards(0), 0)
-    #     self.assertEqual(sc.red_cards(1), -3)
+    def test_own_goals(self):
+        self.assertEqual(self.g1.own_goal(), -4)
+        self.assertNotEqual(self.g1.own_goal(), 0)
+        self.assertEqual(self.g2.own_goal(), -2)
+        self.assertNotEqual(self.g2.own_goal(), 0)
+        self.assertEqual(self.g3.own_goal(), -6)
+        self.assertNotEqual(self.g3.own_goal(), 0)
+        self.assertEqual(self.g4.own_goal(), 0)
+        self.assertNotEqual(self.g4.own_goal(), -2)
 
-    # def test_own_goals(self):
-    #     self.assertEqual(sc.own_goal(0), 0)
-    #     self.assertEqual(sc.own_goal(1), -2)
-    #     self.assertEqual(sc.own_goal(3), -6)
+    def test_tackles(self):
+        self.assertEqual(self.g1.tackles(), 0)
+        self.assertNotEqual(self.g1.tackles(), 1)
+        self.assertEqual(self.g2.tackles(), 0)
+        self.assertNotEqual(self.g2.tackles(), 1)
+        self.assertEqual(self.g3.tackles(), 1)
+        self.assertNotEqual(self.g3.tackles(), 0)
+        self.assertEqual(self.g4.tackles(), 1)
+        self.assertNotEqual(self.g4.tackles(), 0)
+        self.assertEqual(self.d1.tackles(), 2)
+        self.assertNotEqual(self.d1.tackles(), 1)
+        self.assertEqual(self.d2.tackles(), 2)
+        self.assertNotEqual(self.d2.tackles(), 1)
+        self.assertEqual(self.d3.tackles(), 3)
+        self.assertNotEqual(self.d3.tackles(), 2)
+        self.assertEqual(self.d4.tackles(), 3)
+        self.assertNotEqual(self.d4.tackles(), 2)
+        self.assertEqual(self.m1.tackles(), 4)
+        self.assertNotEqual(self.m1.tackles(), 0)
+        self.assertEqual(self.m2.tackles(), 4)
+        self.assertNotEqual(self.m2.tackles(), 1)
+        self.assertEqual(self.m3.tackles(), 5)
+        self.assertNotEqual(self.m3.tackles(), 2)
+        self.assertEqual(self.m4.tackles(), 5)
+        self.assertNotEqual(self.m4.tackles(), 2)
+        self.assertEqual(self.f1.tackles(), 6)
+        self.assertNotEqual(self.f1.tackles(), 0)
+        self.assertEqual(self.f2.tackles(), 6)
+        self.assertNotEqual(self.f2.tackles(), 1)
+        self.assertEqual(self.f3.tackles(), 7)
+        self.assertNotEqual(self.f3.tackles(), 5)
 
-    # def test_tackles(self):
-    #     self.assertEqual(sc.tackles(0), 0)
-    #     self.assertEqual(sc.tackles(1), 0)
-    #     self.assertEqual(sc.tackles(3), 0)
-    #     self.assertEqual(sc.tackles(4), 1)
-    #     self.assertEqual(sc.tackles(7), 1)
-    #     self.assertEqual(sc.tackles(8), 2)
-    #     self.assertEqual(sc.tackles(11), 2)
-    #     self.assertEqual(sc.tackles(12), 3)
+    def test_passes(self):
+        self.assertEqual(self.g1.passes(), 0)
+        self.assertNotEqual(self.g1.passes(), 1)
+        self.assertEqual(self.g2.passes(), 0)
+        self.assertNotEqual(self.g2.passes(), 1)
+        self.assertEqual(self.g3.passes(), 1)
+        self.assertNotEqual(self.g3.passes(), 0)
+        self.assertEqual(self.g4.passes(), 1)
+        self.assertNotEqual(self.g4.passes(), 0)
+        self.assertEqual(self.d1.passes(), 2)
+        self.assertNotEqual(self.d1.passes(), 1)
+        self.assertEqual(self.d2.passes(), 2)
+        self.assertNotEqual(self.d2.passes(), 1)
+        self.assertEqual(self.d3.passes(), 2)
+        self.assertNotEqual(self.d3.passes(), 1)
+        self.assertEqual(self.d4.passes(), 3)
+        self.assertNotEqual(self.d4.passes(), 2)
+        self.assertEqual(self.m1.passes(), 3)
+        self.assertNotEqual(self.m1.passes(), 0)
+        self.assertEqual(self.m2.passes(), 4)
+        self.assertNotEqual(self.m2.passes(), 1)
+        self.assertEqual(self.m3.passes(), 0)
+        self.assertNotEqual(self.m3.passes(), 2)
+        self.assertEqual(self.m4.passes(), 0)
+        self.assertNotEqual(self.m4.passes(), 2)
+        self.assertEqual(self.f1.passes(), 0)
+        self.assertNotEqual(self.f1.passes(), 1)
+        self.assertEqual(self.f2.passes(), 4)
+        self.assertNotEqual(self.f2.passes(), 1)
+        self.assertEqual(self.f3.passes(), 5)
+        self.assertNotEqual(self.f3.passes(), 4)
 
-    # def test_passes(self):
-    #     self.assertEqual(sc.passes(0), 0)
-    #     self.assertEqual(sc.passes(20), 0)
-    #     self.assertEqual(sc.passes(35), 1)
-    #     self.assertEqual(sc.passes(55), 1)
-    #     self.assertEqual(sc.passes(70), 2)
-    #     self.assertEqual(sc.passes(75), 2)
-    #     self.assertEqual(sc.passes(110), 3)
 
     # def test_key_passes(self):
     #     self.assertEqual(sc.key_passes(0), 0)
