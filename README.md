@@ -59,7 +59,7 @@ driver = pi.mls_fantasy_login(login, pwd)
 player_list = pi.get_player_ids_listform(driver)
 ```
 
-As of August 2020, there is a quirk that Miguel Ibarra (who doesn't play much, which is
+As of September 2020, there is a quirk that Miguel Ibarra (who doesn't play much, which is
 a bummer because he's a great player and I'm a Sounders fan) has some data that
 is not inputted properly on the MLS Fantasy stats pages. For the scraper to work properly,
 I remove him from the player list to continue.
