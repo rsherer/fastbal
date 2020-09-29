@@ -68,7 +68,7 @@ Each player is a list of strings in the format `id, name, team`, so the followin
 will remove him from the variable `player_list`:
 
 ```
-for idx, player in player_list:
+for idx, player in enumerate(player_list):
     if "Ibarra" in player[1]:
         ibarra = idx
 player_list.pop(ibarra)
