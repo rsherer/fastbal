@@ -1,6 +1,8 @@
 # fastbal -> FAntasy Soccer Team By ALgorithm
 Using machine learning and linear programming to choose an MLS Fantasy soccer team.
 
+You can find the current standings for the 2020 season [here.](https://github.com/rsherer/fastbal/blob/master/2020_season_standings.md)
+
 ## This project includes the following sections:
 
   * [Overview](#overview)
