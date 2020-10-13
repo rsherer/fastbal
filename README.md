@@ -61,19 +61,24 @@ driver = pi.mls_fantasy_login(login, pwd)
 player_list = pi.get_player_ids_listform(driver)
 ```
 
-As of September 2020, there is a quirk that Miguel Ibarra (who doesn't play much, which is
-a bummer because he's a great player and I'm a Sounders fan) has some data that
-is not inputted properly on the MLS Fantasy stats pages. For the scraper to work properly,
-I remove him from the player list to continue.
+As of October 2020, there is a quirk that Miguel Ibarra (who doesn't play much, which is
+a bummer because he's a great player and I'm a Sounders fan), and Tanner Beason of
+the San Jose Earthquakes, have some data that is not inputted properly on the MLS 
+Fantasy stats pages. For the scraper to work properly, I remove them from the player list to continue.
 
-Each player is a list of strings in the format `id, name, team`, so the following script
-will remove him from the variable `player_list`:
+Each player is a list of strings in the format `id, name, team`, so the following scripts
+will remove them from the variable `player_list`:
 
 ```
 for idx, player in enumerate(player_list):
     if "Ibarra" in player[1]:
         ibarra = idx
 player_list.pop(ibarra)
+
+for idx, player in enumerate(player_list):
+    if "Beason" in player[1]:
+        beason = idx
+player_list.pop(beason)
 ```
 
 After which, to scrape the website, the following will script will scrape the meta data,
