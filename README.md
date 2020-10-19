@@ -82,7 +82,7 @@ player_list.pop(beason)
 
 for idx, player in enumerate(player_list):
     if "Y. Gonzalez" in player[1]:
-        ygonzalex = idx
+        ygonzalez = idx
 player_list.pop(ygonzalez)
 ```
 
