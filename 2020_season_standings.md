@@ -13,10 +13,10 @@ there are three teams, each team will be in a HtH match with the other team
 each week.
 
 ## Total Points for the Season
-    Rank    Team                Total Score     Most Recent Score
-    1.      Zidane's Forehead   781             83
-    2.      seagullane          738             68
-    3.      fastbal             604             56
+    Rank    Team                Total Score     Latest Score    Overall MLS Fantasy Ranking
+    1.      Zidane's Forehead   781             83              622/24397 (top 2.5%)
+    2.      seagullane          738             68              906/24397 (top 3.7%)
+    3.      fastbal             604             56              2637/24397 (top 10.8%)
 
 ## Head-To-Head Standings
     Rank    Team                Points          YTD For     YTD Against
@@ -42,7 +42,7 @@ each week.
     3.      fastbal             50      0       100         149
 
 #### Week 8 Scores
-    Rank    Team                Points  H2H     Week For    Week Against
+    Rank    Team     d           Points  H2H     Week For    Week Against
     1.      seagullane          79      6       158         133
     2.      Zidane's Forehead   76      3       152         136
     3.      fastbal             57      0       114         155
