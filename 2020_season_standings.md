@@ -14,20 +14,26 @@ each week.
 
 ## Total Points for the Season
     Rank    Team                Total Score     Latest Score    Overall MLS Fantasy Ranking
-    1.      Zidane's Forehead   781             83              622/24397 (top 2.5%)
-    2.      seagullane          738             68              906/24397 (top 3.7%)
-    3.      fastbal             604             56              2637/24397 (top 10.8%)
+    1.      Zidane's Forehead   888             107             649/24497 (top 2.6%)
+    2.      seagullane          831             93              1117/24397 (top 4.6%)
+    3.      fastbal             696             92              2732/24397 (top 11.2%)
 
 ## Head-To-Head Standings
     Rank    Team                Points          YTD For     YTD Against
-    1.      Zidane's Forehead   48              1562        1342
-    2.      seagullane          40              1476        1385
-    3.      fastbal             4               1208        1519
+    1.      Zidane's Forehead   54              1776        1527
+    2.      seagullane          43              1662        1584
+    3.      fastbal             4               1392        1719
 
-#### Week 11 Scores
+#### Week 12 Scores
 ```
     *IN PROGRESS*
 ```
+
+#### Week 11 Scores
+    Rank    Team                Points  H2H     Week For    Week Against
+    1.      Zidane's Forehead   107     6       214         185
+    2.      seagullane          93      3       186         199
+    3.      fastbal             92      0       184         200
 
 #### Week 10 Scores
     Rank    Team                Points  H2H     Week For    Week Against
